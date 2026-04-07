@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDBook - Colorful Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #6a5acd; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .form-container { background-color: #ffffff; width: 100%; max-width: 400px; padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); text-align: center; }
+        .main-top-icon { font-size: 65px; margin-bottom: 10px; display: inline-block; background: -webkit-linear-gradient(#6a5acd, #9370db); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .form-title { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 25px; }
+        .input-group { margin-bottom: 18px; text-align: left; }
+        .input-group label { display: block; font-size: 14px; font-weight: 700; color: #555; margin-bottom: 8px; }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-wrapper i { position: absolute; left: 15px; font-size: 20px; }
+        
+        /* আপনার স্ক্রিনশটের মতো রঙিন আইকন */
+        .fa-user-circle { color: #ff4757; } .fa-phone-alt { color: #2ed573; } .fa-flag { color: #3742fa; }
+        .fa-map-marked-alt { color: #ffa502; } .fa-heart { color: #ff6b81; } .fa-calendar-alt { color: #6a5acd; }
+        .fa-address-card { color: #1e90ff; }
+
+        input, select, textarea { width: 100%; padding: 14px 15px 14px 50px; border: 1px solid #f1f2f6; border-radius: 15px; font-size: 15px; background-color: #f7f8fa; outline: none; box-sizing: border-box; }
+        .submit-btn { width: 100%; padding: 16px; background: linear-gradient(to right, #6a5acd, #483d8b); color: white; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 5px 15px rgba(106, 90, 205, 0.3); }
+
+        /* Step 2: ফটো ফ্রেম স্টাইল */
+        #photo-step { display: none; }
+        .photo-frame { width: 170px; height: 170px; border: 5px solid #6a5acd; border-radius: 50%; margin: 20px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f7f8fa; cursor: pointer; position: relative; }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .footer-copyright { margin-top: 25px; font-size: 11px; color: #a4b0be; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <form id="profileForm" action="/save-profile" method="POST" enctype="multipart/form-data">
+        
+        <div id="info-step">
+            <div class="main-top-icon"><i class="fas fa-edit"></i></div>
+            <div class="form-title">Form</div>
+            
+            <div class="input-group"><label>Full Name</label><div class="input-wrapper"><i class="fas fa-user-circle"></i><input type="text" name="fullname" placeholder="Enter Full Name" required></div></div>
+            <div class="input-group"><label>Phone Number</label><div class="input-wrapper"><i class="fas fa-phone-alt"></i><input type="tel" name="phone" placeholder="Enter Phone Number"></div></div>
+            <div class="input-group"><label>Citizenship</label><div class="input-wrapper"><i class="fas fa-flag"></i><input type="text" name="citizenship" placeholder="Enter Country"></div></div>
+            <div class="input-group"><label>Current Location</label><div class="input-wrapper"><i class="fas fa-map-marked-alt"></i><input type="text" name="location" placeholder="Current City"></div></div>
+            <div class="input-group"><label>Relationship Status</label><div class="input-wrapper"><i class="fas fa-heart"></i><select name="relationship"><option>Single</option><option>Married</option></select></div></div>
+            <div class="input-group"><label>Date of Birth</label><div class="input-wrapper"><i class="fas fa-calendar-alt"></i><input type="date" name="dob"></div></div>
+            <div class="input-group"><label>Tell us about yourself (Bio)</label><div class="input-wrapper"><i class="fas fa-address-card" style="top: 18px;"></i><textarea name="bio" placeholder="Write something about your life..."></textarea></div></div>
+
+            <button type="button" class="submit-btn" onclick="nextStep()">Next</button>
+        </div>
+
+        <div id="photo-step">
+    <div class="form-title">Profile Photo</div>
+    <p style="color: #666; font-size: 14px;">ফ্রেমে ক্লিক করে ছবি দিন</p>
+    
+    <label for="myImg" style="cursor: pointer; display: block;">
+        <div style="width: 170px; height: 170px; border: 5px solid #6a5acd; border-radius: 50%; margin: 20px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f7f8fa; position: relative;">
+            
+            <i class="fas fa-camera" id="camIcon" style="font-size: 45px; color: #6a5acd; position: absolute;"></i>
+            
+            <img id="preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+        </div>
+    </label>
+
+    <input type="file" id="myImg" name="profilePic" accept="image/*" style="display:none;" onchange="previewFile(event)" required>
+
+    <button type="submit" class="submit-btn">Create Profile</button>
+</div>
+
+<script>
+    // ছবি সিলেক্ট করার পর সেটি ফ্রেমের ভেতর দেখানোর ফাংশন
+    function previewFile(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('preview');
+            var icon = document.getElementById('camIcon');
+            
+            output.src = reader.result;
+            output.style.display = 'block'; // ছবি দেখাবে
+            icon.style.display = 'none';    // আইকন লুকিয়ে ফেলবে
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // Next বাটনে ক্লিক করলে ফটো স্টেপ দেখানোর ফাংশন
+    function nextStep() {
+        document.getElementById('info-step').style.display = 'none';
+        document.getElementById('photo-step').style.display = 'block';
+    }
+</script>
