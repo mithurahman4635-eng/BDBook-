@@ -1,39 +1,24 @@
-const path = require('path'); //
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
 const app = express();
-app.use(express.static(path.join(__dirname)));
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+const PORT = process.env.PORT || 3000;
+
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname)));
 
-// MongoDB Connection (আপনার Connection String এখানে দিন)
-mongoose.connect(process.env.MONGO_URI || "your_mongodb_url", { useNewUrlParser: true, useUnifiedTopology: true }).catch(err => console.log("DB Error:", err)); //('mongodb://localhost:27017/userDB');
-
-// User Schema তৈরি
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true },
-  password: { type: String, required: true }
-});
-
-const User = mongoose.model('User', userSchema);
+// মেইন রুটে সরাসরি login.html দেখাবে
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'signup.html')); 
-});
-// সাইন-আপ রাউট
-app.post('/signup', async (req, res) => {
-  try {
-    const newUser = new User({
-      email: req.body.email,
-      password: req.body.password // দ্রষ্টব্য: পাসওয়ার্ড সবসময় হ্যাশ করে সেভ করা উচিত
-    });
-
-    await newUser.save();
-    res.send("অভিনন্দন! আপনার ডেটা MongoDB-তে সেভ হয়েছে।");
-  } catch (err) {
-    res.status(500).send("কিছু একটা ভুল হয়েছে।");
-  }
+    res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-app.listen(3000, () => console.log("Server is running on port 3000"));
+// ডেটাবেজ কানেকশন (কানেক্ট না হলেও সার্ভার যেন না থামে)
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/bdbook', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => console.log('✅ DB Connected')).catch(err => console.log('❌ DB Error:', err));
+
+app.listen(PORT, () => {
+    console.log('🚀 Server running on port ' + PORT);
+});
