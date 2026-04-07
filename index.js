@@ -10,7 +10,7 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // MongoDB Connection (আপনার Connection String এখানে দিন)
-mongoose.connect('mongodb://localhost:27017/userDB');
+mongoose.connect(process.env.MONGO_URI || "your_mongodb_url", { useNewUrlParser: true, useUnifiedTopology: true }).catch(err => console.log("DB Error:", err)); //('mongodb://localhost:27017/userDB');
 
 // User Schema তৈরি
 const userSchema = new mongoose.Schema({
