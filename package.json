@@ -1,8 +1,8 @@
 {
   "name": "bdbook",
   "version": "1.0.0",
-  "main": "login.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node login.js"
+    "start": "node index.js"
   }
 }
