@@ -1,9 +1,12 @@
+const path = require('path');
 const path = require('path'); //
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const app = express();
+app.use(express.static(path.join(__dirname)));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // MongoDB Connection (আপনার Connection String এখানে দিন)
