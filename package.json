@@ -4,8 +4,5 @@
   "main": "login.js",
   "scripts": {
     "start": "node login.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2"
   }
 }
