@@ -68,4 +68,4 @@ app.post('/signup', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on: http://localhost:${PORT}`);
-});
+});app.get('/', (req, res) => { res.send('BDBook Server is Running Successfully'); });
