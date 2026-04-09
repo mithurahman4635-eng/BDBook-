@@ -1,0 +1,86 @@
+<style>
+    /* ১. মেইন কিল মেসেজ কন্টেইনার (এটি মাপ নিয়ন্ত্রণ করবে) */
+    .fire-kill-wrapper {
+        width: 100%;
+        max-width: 400px; /* কিল মেসেজের আদর্শ মাপ */
+        height: 60px;      /* কিল মেসেজের আদর্শ মাপ */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(90deg, #1a1a1a, #000 50%, #1a1a1a);
+        border: 2px solid #ff4500;
+        border-radius: 8px;
+        color: #fff;
+        font-family: 'Segoe UI', sans-serif;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 0 15px #ff4500, inset 0 0 10px #ff4500;
+        animation: fire-pulse 1.5s infinite alternate;
+    }
+
+    /* শপের ভেতর যাতে ফিট হয় (প্রিভিউয়ের জন্য) */
+    .custom-html-frame > .fire-kill-wrapper {
+        width: 100%; height: 100%; max-width: 100%;
+        transform: scale(0.9); /* একটু ছোট করে দেখানো */
+    }
+
+    /* ২. আগুনের শিখার এনিমেশন */
+    .fire-kill-wrapper::before,
+    .fire-kill-wrapper::after {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 15px; /* একটু ছোট করা হয়েছে */
+        background: conic-gradient(from 180deg at 50% 50%, #ff4500, #ff8c00, #ffd700, transparent, #ff4500);
+        animation: fire-flow 3s linear infinite;
+        z-index: 1;
+    }
+
+    .fire-kill-wrapper::before { top: 0; left: 0; }
+    .fire-kill-wrapper::after { bottom: 0; left: 0; }
+
+    /* ৩. কন্টেন্ট এরিয়া */
+    .fire-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        z-index: 2; /* আগুনের ওপরে থাকবে */
+        position: relative;
+        padding: 0 10px;
+    }
+
+    /* ৪. ছবির এফেক্ট */
+    .fire-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #ff8c00;
+        box-shadow: 0 0 10px #ff4500;
+        background: #333;
+    }
+
+    /* ৫. টেক্সট এফেক্ট */
+    .fire-info h4 { margin: 0; font-size: 13px; font-weight: bold; }
+    .fire-info p { margin: 0; font-size: 9px; color: #ffca28; font-weight: bold; text-transform: uppercase; }
+
+    /* ৬. এনিমেশন ডেফিনিশন */
+    @keyframes fire-pulse {
+        0% { box-shadow: 0 0 15px #ff4500, inset 0 0 10px #ff4500; }
+        100% { box-shadow: 0 0 25px #ff8c00, inset 0 0 15px #ff4500; }
+    }
+
+    @keyframes fire-flow {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+</style>
+
+<div class="fire-kill-wrapper">
+    <div class="fire-content">
+        <div class="fire-avatar"></div>
+        <div class="fire-info">
+            <h4>MITHU BHAI</h4>
+            <p>Shared a New Post!</p>
+        </div>
+    </div>
+</div>
