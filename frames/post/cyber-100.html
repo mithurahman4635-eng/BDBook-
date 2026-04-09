@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<style>
+    body {
+        margin: 0;
+        background-color: #050505; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* মূল কন্টেইনার - দুই পাশে কোনো বাড়তি ডিজাইন নেই */
+    .kill-box {
+        position: relative;
+        width: 500px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ঘূর্ণনশীল নিয়ন বর্ডার */
+    .neon-border {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        border-radius: 4px;
+        overflow: hidden;
+        z-index: 1;
+        /* হালকা তেরছা কাট যা ইউনিক লাগে */
+        transform: skewX(-10deg);
+    }
+
+    /* বর্ডারের চারিদিক দিয়ে যে আলোটা ঘুরবে (Fire/Neon Effect) */
+    .neon-border::before {
+        content: '';
+        position: absolute;
+        width: 150%;
+        height: 400%;
+        top: -150%;
+        left: -25%;
+        /* আপনার পছন্দের আগুনের মতো রঙ */
+        background: conic-gradient(transparent, #ff0000, #ff8c00, #00f2ff, transparent);
+        animation: rotateLight 2s linear infinite;
+    }
+
+    /* মাঝখানের মেইন স্বচ্ছ অংশ */
+    .neon-border::after {
+        content: '';
+        position: absolute;
+        inset: 3px; /* বর্ডারের চিকন দাগ */
+        background: rgba(0, 0, 0, 0.7); /* স্বচ্ছ কালো */
+        border-radius: 2px;
+        z-index: 2;
+    }
+
+    /* টেক্সট ডিজাইন */
+    .text-area {
+        position: relative;
+        z-index: 10;
+        color: #fff;
+        font-family: 'Arial Black', sans-serif;
+        font-size: 24px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 6px;
+        /* টেক্সট গ্লো (স্থির) */
+        text-shadow: 0 0 10px #fff, 0 0 20px #00f2ff;
+        transform: skewX(10deg); /* বর্ডারের skew ঠিক করার জন্য */
+    }
+
+    @keyframes rotateLight {
+        100% { transform: rotate(360deg); }
+    }
+</style>
+</head>
+<body>
+
+    <div class="kill-box">
+        <div class="neon-border"></div>
+
+        <div class="text-area"></div>
+    </div>
+
+</body>
+</html>
