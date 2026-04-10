@@ -1,15 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors'); // এটি যোগ করুন
 const path = require('path');
-const cors = require('cors');
 
 const app = express();
 
-// মিডলওয়্যার (Middleware)
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname)); // CSS বা JS ফাইল থাকলে লোড করার জন্য
+// এই লাইনগুলো খুব জরুরি ডাটা পড়ার জন্য
+app.use(cors()); 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(express.static(__dirname)); // আপনার সব ফাইল চিনিয়ে দেওয়ার জন্য
 
 // --- MongoDB কানেকশন ---
 const MONGO_URI = 'mongodb+srv://mithu:mithulamiya@cluster0.yujofyv.mongodb.net/BDBook?retryWrites=true&w=majority&appName=Cluster0';
