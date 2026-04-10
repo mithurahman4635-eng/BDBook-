@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
 // index.js এর ১৮ নম্বর লাইনের দিকে এটি ঠিক করুন
-const mongoURI = "mongodb+srv://mithu:<mithulamiya>@cluster0.yujofyv.mongodb.net/?appName=Cluster0"; 
+const mongoURI = "mongodb+srv://mithu:mithulamiya@cluster0.yujofyv.mongodb.net/?appName=Cluster0"; 
 
 mongoose.connect(mongoURI)
     .then(() => console.log('✅ BDBook ডাটাবেসে সফলভাবে কানেক্ট হয়েছে।'))
