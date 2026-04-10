@@ -30,23 +30,16 @@ app.get('/', (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-    console.log("📢 সার্ভারে ডাটা এসেছে:", req.body); // এটি চেক করবে ডাটা আদৌ পৌঁছালো কি না
     try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            console.log("❌ ইমেইল বা পাসওয়ার্ড পাওয়া যায়নি!");
-            return res.send("ইমেইল এবং পাসওয়ার্ড দুইটাই দিতে হবে!");
-        }
+        const { email, password } = req.body; // আমরা শুধু এই দুটো নেবো
         const newUser = new User({ email, password });
         await newUser.save();
-        console.log("✅ অভিনন্দন! নতুন ইউজার সেভ হয়েছে:", email);
-        res.send("<h1>সাবাস মিঠু ভাই! ডাটা সেভ হয়েছে।</h1>");
+        res.redirect('/login.html'); // বা আপনার পছন্দের পেজ
     } catch (err) {
-        console.log("⚠️ ডাটাবেসে সেভ করতে সমস্যা হয়েছে:", err.message);
-        res.send("সমস্যা হয়েছে: " + err.message);
+        console.error("সেভ হলো না কেন:", err);
+        res.send("ভুল হয়েছে: " + err.message);
     }
 });
-
     try {
         const newUser = new User({ email, password });
         await newUser.save();
