@@ -29,18 +29,23 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'signup.html'));
 });
 
-// সাইন-আপ করার মেইন জায়গা
 app.post('/signup', async (req, res) => {
-    console.log("------------------------------------");
-    console.log("📩 নতুন সাইন-আপ রিকোয়েস্ট এসেছে!");
-    console.log("📦 আপনার পাঠানো ডাটা:", req.body);
-
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        console.log("⚠️ সমস্যা: ফর্ম থেকে ইমেইল বা পাসওয়ার্ড আসেনি।");
-        return res.send("ইমেইল বা পাসওয়ার্ড খালি! আপনার HTML ফর্ম চেক করুন।");
+    console.log("📢 সার্ভারে ডাটা এসেছে:", req.body); // এটি চেক করবে ডাটা আদৌ পৌঁছালো কি না
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            console.log("❌ ইমেইল বা পাসওয়ার্ড পাওয়া যায়নি!");
+            return res.send("ইমেইল এবং পাসওয়ার্ড দুইটাই দিতে হবে!");
+        }
+        const newUser = new User({ email, password });
+        await newUser.save();
+        console.log("✅ অভিনন্দন! নতুন ইউজার সেভ হয়েছে:", email);
+        res.send("<h1>সাবাস মিঠু ভাই! ডাটা সেভ হয়েছে।</h1>");
+    } catch (err) {
+        console.log("⚠️ ডাটাবেসে সেভ করতে সমস্যা হয়েছে:", err.message);
+        res.send("সমস্যা হয়েছে: " + err.message);
     }
+});
 
     try {
         const newUser = new User({ email, password });
