@@ -12,8 +12,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
-// MongoDB কানেকশন (আপনার নিজের Connection String এখানে বসাবেন)
-const mongoURI = process.env.MONGO_URI || "আপনার_মঙ্গোডিবি_লিঙ্ক_এখানে_দিন";
+// index.js এর ১৮ নম্বর লাইনের দিকে এটি ঠিক করুন
+const mongoURI = "mongodb+srv://mithu:<mithulamiya>@cluster0.yujofyv.mongodb.net/?appName=Cluster0"; 
 
 mongoose.connect(mongoURI)
     .then(() => console.log('✅ BDBook ডাটাবেসে সফলভাবে কানেক্ট হয়েছে।'))
