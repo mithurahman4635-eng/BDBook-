@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDBook - Killing Message</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="newsfeed.css">
+</head>
+<body>
+
+    <div id="post-kill-wrapper">
+        <div id="kill-message-box" class="default-frame">
+            <div class="kill-content">
+                <div class="kill-avatar">
+                    <img src="https://via.placeholder.com/100" id="kill-user-avatar">
+                </div>
+                <div class="kill-icon">
+                    <i class="fas fa-bolt"></i> 
+                </div>
+                <div class="kill-text">
+                    <span id="kill-user-name">Mithu Rahman</span> 
+                    <span class="kill-action">Shared a New Post!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-nav-container">
+        <div class="status-row">
+            <div class="digital-clock" id="clock">00:00:00</div>
+            <div class="event-box" onclick="openShop()">
+                <i class="fas fa-trophy"></i>
+                <span class="event-text">Event</span>
+                <span id="event-count" class="event-badge-count">0</span>
+                <span class="new-tag">New</span>
+            </div>
+        </div>
+
+        <div class="action-row">
+            <div class="nav-item active" onclick="location.reload()">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="nav-item" onclick="openSearchPage()">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="nav-item" onclick="goToNotifications()" style="position: relative; cursor: pointer;">
+    <i class="fas fa-bell" style="font-size: 24px;"></i>
+    <span id="noti-badge" class="badge">0</span>
+</div>
+            <div class="nav-item user-profile-nav" onclick="goToProfile()">
+                <img src="https://via.placeholder.com/50" class="nav-avatar" id="current-user-img">
+            </div>
+        </div>
+    </div>
+<div class="post-input-box" onclick="goToCreatePost()">
+    <img src="user_profile_link" class="user-post-img">
+    <div class="post-placeholder">
+        <span>What's on your mind?</span>
+    </div>
+    <i class="fas fa-image" style="color: #45bd62; font-size: 20px;"></i>
+</div>
+
+    <div id="newsfeed-container">
+        <div class="post-card">
+            <div class="post-header">
+                <img src="https://via.placeholder.com/50" class="post-avatar">
+                <div class="post-info">
+                    <h4>Mithu Bhai</h4>
+                    <span>Just now · <i class="fas fa-globe-americas"></i></span>
+                </div>
+            </div>
+            <div class="post-content">
+                BDBook-এ স্বাগতম! আমাদের নতুন নিউজফিড চেক করুন।
+            </div>
+            <div class="post-stats">
+                <span><i class="fas fa-thumbs-up"></i> 25</span>
+                <span>10 Comments</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="newsfeed.js"></script>
+</body>
+</html>

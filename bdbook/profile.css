@@ -1,0 +1,158 @@
+/* আপনার পুরো profile.css ফাইলটি মুছে নিচের এই কোডটি বসান */
+
+Body { 
+    margin: 0; 
+    font-family: 'Segoe UI', sans-serif; 
+    background: #f0f2f5; 
+}
+
+/* কভার ও প্রোফাইল ইমেজ স্টাইল (অপরিবর্তিত) */
+.cover-photo-mini { height: 125px; background: #000; overflow: hidden; position: relative; }
+#user-cover-video { width: 100%; height: 100%; object-fit: cover; }
+.home-btn { position: absolute; top: 10px; left: 10px; z-index: 100; background: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #1877f2; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; }
+.profile-photo-mini { position: relative; width: 90px; height: 90px; margin: -45px auto 10px; }
+.img-wrapper { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff; overflow: hidden; background: #fff; position: relative; z-index: 1; }
+#display-pic { width: 100%; height: 100%; object-fit: cover; }
+.cam-icon { position: absolute; bottom: 5px; right: 5px; background: #e4e6eb; padding: 5px; border-radius: 50%; z-index: 10; font-size: 12px; cursor: pointer; }
+
+/* ১. সমাধান: আপনার HTML অনুযায়ী ফলো সেকশন (ডান থেকে বামে) */
+.horizontal-follow-section { 
+    display: flex !important; 
+    flex-direction: row !important; 
+    justify-content: center !important; 
+    align-items: center !important; 
+    gap: 20px !important; 
+    margin: 15px 0 !important; 
+}
+
+/* আপনার HTML-এর 'stat-group' ক্লাস অনুযায়ী স্টাইল */
+.stat-group { 
+    display: flex !important;
+    flex-direction: column !important; 
+    align-items: center !important;
+    cursor: pointer;
+}
+
+.stat-group strong { 
+    font-size: 17px; 
+    color: #000; 
+    line-height: 1;
+}
+
+.stat-group span {
+    font-size: 13px;
+    color: #65676b;
+}
+
+/* ফলো বাটন */
+.fb-follow-btn { 
+    background: #1877f2; 
+    color: #fff; 
+    border: none; 
+    padding: 8px 25px; 
+    border-radius: 6px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    margin: 0 !important; 
+}
+
+/* ২. ফলোয়ার দেখার বক্স: অবাক করা প্রিমিয়াম ডিজাইন */
+.modal-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: 0.3s; z-index: 1000; }
+.modal-bg.open { visibility: visible; opacity: 1; }
+
+.modal-spring-box { 
+    width: 100%; height: 75%; 
+    background: rgba(255, 255, 255, 0.98); 
+    backdrop-filter: blur(20px); 
+    border-radius: 30px 30px 0 0; 
+    transform: translateY(100%); 
+    transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    padding: 25px; 
+    box-sizing: border-box; 
+    box-shadow: 0 -15px 50px rgba(0,0,0,0.3);
+    border-top: 5px solid #1877f2; 
+}
+
+.modal-bg.open .modal-spring-box { transform: translateY(0); }
+
+/* ইউনিক সার্চ বক্স: HTML এর 'search-wrap-unique' ক্লাস অনুযায়ী */
+.search-wrap-unique {
+    margin: 20px 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-wrap-unique i {
+    position: absolute;
+    left: 15px;
+    color: #1877f2;
+}
+
+.search-wrap-unique input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border-radius: 50px; 
+    border: 2px solid #e4e6eb;
+    background: #f0f2f5;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-wrap-unique input:focus {
+    border-color: #1877f2;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(24, 119, 242, 0.2);
+}
+
+/* বাকি স্টাইলগুলো */
+.user-main-details { text-align: center; background: #fff; padding-bottom: 15px; }
+h2 { margin: 5px 0; font-size: 20px; }
+.compact-info { text-align: left; max-width: 280px; margin: 10px auto; border-top: 1px solid #eee; padding-top: 10px; }
+.bio-text { font-weight: bold; text-align: center; margin-bottom: 8px; font-size: 15px; }
+.info-line { font-size: 14px; margin: 4px 0; color: #4b4b4b; }
+.extra-info-hidden { max-height: 0; overflow: hidden; transition: 0.3s; background: #f9f9f9; }
+.extra-info-hidden.active { max-height: 120px; padding: 10px; }
+.more-toggle-btn { width: 90%; background: #e4e6eb; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.close-modal-btn { font-size: 35px; cursor: pointer; color: #65676b; float: right; margin-top: -10px; }
+
+/* পুরো পেজ স্ক্রল করার জন্য */
+html, body {
+    height: 100%;
+    overflow-y: auto; /* স্ক্রল সচল করবে */
+    scroll-behavior: smooth;
+}
+
+#profile-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* পোস্ট সেকশন যাতে ঠিকমতো স্ক্রল হয় */
+.profile-feed {
+    padding: 15px;
+    flex-grow: 1;
+    overflow: visible; /* পোস্টগুলো যাতে দেখা যায় */
+}
+
+/* ইনপুট বক্সের স্টাইল একটু ঠিক করে দিলাম */
+.input-trigger {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.input-trigger button {
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    background: #f0f2f5;
+    color: #65676b;
+    cursor: pointer;
+}

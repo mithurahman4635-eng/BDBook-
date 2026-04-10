@@ -1,0 +1,333 @@
+/* পুরো পেজের ব্যাকগ্রাউন্ড সাদা */
+body {
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Killing Message Wrapper */
+#post-kill-wrapper {
+    position: fixed;
+    top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+/* Killing Box Design */
+#kill-message-box {
+    /* সাদার ওপর মেসেজটি ফুটানোর জন্য ডার্ক গ্রেডিয়েন্ট */
+    background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(33, 33, 33, 0.9) 15%, rgba(33, 33, 33, 0.9) 85%, rgba(0,0,0,0) 100%);
+    border-left: 4px solid #ffc107; 
+    padding: 8px 30px;
+    display: flex;
+    align-items: center;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: translateX(150%);
+    opacity: 0;
+}
+
+/* যখন মেসেজটি দেখাবে */
+.kill-visible {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+}
+
+.kill-content {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+/* গোল প্রোফাইল ছবি */
+.kill-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #ffffff;
+    background: #444;
+}
+
+.kill-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.kill-icon {
+    color: #ffc107;
+    font-size: 15px;
+    filter: drop-shadow(0 0 5px #ffc107);
+}
+
+.kill-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+#kill-user-name {
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.kill-action {
+    color: #ff4444; 
+    margin-left: 8px;
+}
+
+/* মেইন নেভিগেশন কন্টেইনার */
+.main-nav-container {
+    background: #ffffff;
+    /* শুধুমাত্র উপরে ৭০ পিক্সেল গ্যাপ থাকবে, ডানে-বামে এবং নিচে ০ */
+    margin: 70px 0 0 0 !important; 
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 0; 
+}
+
+/* স্ট্যাটাস রো ডিজাইন */
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* রিয়েল ডিজিটাল ঘড়ি স্টাইল */
+.digital-clock {
+    font-family: 'Orbitron', sans-serif; /* গেম বা ডিজিটাল লুকের জন্য */
+    font-weight: bold;
+    color: #ff0000; /* ডিজিটাল ঘড়ির মতো লাল কালার */
+    font-size: 15px;
+    background: #1a1a1a;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 2px;
+}
+
+/* নিউজফিড ইভেন্ট বক্স - এখন হুবহু NEW ট্যাগের মতো */
+.event-box {
+    background: linear-gradient(45deg, #ff0000, #ff8000); /* লাল-কমলা গ্রেডিয়েন্ট */
+    color: white;
+    padding: 6px 15px;
+    border-radius: 50px; /* প্রিমিয়াম গোল শেপ */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+    /* আপনার সেই কাঁপানো এবং জ্বলজ্বল করার অ্যানিমেশন */
+    animation: neonPulseGlow 1.5s infinite alternate;
+}
+
+/* Event এর ভেতরের New লেখাটি */
+.new-tag {
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* লাল নাম্বার ব্যাজ (সাদা বর্ডারসহ যাতে ফুটে ওঠে) */
+.event-badge-count {
+    background: white;
+    color: #ff0000;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* শপের মতো প্রিমিয়াম পালস এবং গ্লো অ্যানিমেশন */
+@keyframes neonPulseGlow {
+    0% { 
+        transform: scale(1); 
+        box-shadow: 0 0 8px #ff0000; 
+    }
+    50% { 
+        transform: scale(1.08); 
+        box-shadow: 0 0 20px #ff8000; 
+    }
+    100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 8px #ff0000; 
+    }
+}
+
+/* হোভার করলে একটু বড় হবে */
+.event-box:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+/* ইভেন্ট নোটিফিকেশন কাউন্ট (১, ২ স্টাইল) */
+.event-badge-count {
+    background: #ff0000;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 50%;
+    position: absolute;
+    top: -12px;
+    left: 5px;
+    border: 2px solid white;
+    display: none; /* শুরুতে লুকানো থাকবে, আইটেম থাকলে ভেসে উঠবে */
+}
+
+/* আইকনগুলোর ডিজাইন */
+.action-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.nav-item {
+    font-size: 24px;
+    color: #1c1e21; /* রিয়েল আইকন কালার */
+    cursor: pointer;
+    position: relative;
+}
+
+.nav-item i {
+    transition: transform 0.2s;
+}
+
+.nav-item:active i {
+    transform: scale(0.9); /* ক্লিক করলে রিয়েল ফিল দিবে */
+}
+
+.nav-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    object-fit: cover;
+}
+
+/* নিচের পোস্ট বক্স */
+.post-input-box { 
+    background: #ffffff; 
+    /* পোস্ট বক্সের উপরে কোনো গ্যাপ থাকবে না */
+    margin-top: 0 !important; 
+    margin-bottom: 10px; 
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-top: none !important; 
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+}
+
+.user-post-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-placeholder {
+    flex: 1;
+    background: #f0f2f5;
+    padding: 10px 15px;
+    border-radius: 20px;
+    color: #65676b;
+    font-size: 15px;
+}
+
+/* নিউজফিড কার্ড ডিজাইন */
+.post-card {
+    background: #ffffff;
+    margin-bottom: 10px;
+    padding: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.post-info h4 { margin: 0; font-size: 15px; color: #050505; }
+.post-info span { font-size: 12px; color: #65676b; }
+
+.post-content {
+    font-size: 15px;
+    color: #050505;
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.post-stats {
+    border-top: 1px solid #e4e6eb;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #65676b;
+}/* --- মিঠু ভাই স্পেশাল: কিলিং মেসেজ ফ্রেম ফিক্স --- */
+
+/* ১. ফ্রেমের জন্য একটি নির্দিষ্ট মাপের লোহার বক্স */
+.killing-frame-display {
+    width: 100%;
+    max-width: 500px; /* মোবাইল স্ক্রিনের জন্য পারফেক্ট */
+    height: 40px;    /* ফ্রেমের উচ্চতা নির্দিষ্ট করে দিলাম */
+    margin: 0 auto;
+    overflow: hidden !important; /* ফ্রেম বাইরে বের হতে পারবে না */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    z-index: 1;
+}
+
+/* ২. ফ্রেমের ভেতরের কোডকে কন্ট্রোল করা (Iframe Logic) */
+.killing-frame-display iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    pointer-events: none; /* প্রিভিউতে ক্লিক লাগবে না */
+    transform: scale(0.9); /* যদি ফ্রেম বড় মনে হয় তবে ০.৮ করে দিয়েন */
+    transform-origin: center;
+}
+
+/* ৩. যদি কিলিং মেসেজ বক্সের ভেতরে ফ্রেম থাকে তবে সেটার পজিশন ঠিক করা */
+#kill-message-box {
+    overflow: hidden !important; /* কিলিং বক্সের বাইরে ডিজাইন যাবে না */
+    max-height: 60px; /* মেসেজ বক্সের একটা লিমিট */
+}
+
+/* ৪. গ্লোবাল স্টাইল প্রোটেকশন */
+/* ফ্রেমের ভেতরের কোনো স্টাইল যাতে আপনার নিউজফিডের সাদা ব্যাকগ্রাউন্ড নষ্ট না করে */
+.killing-frame-display * {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDBook - Premium Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="shop.css">
+</head>
+<body>
+
+  <div class="shop-header">
+        <i class="fas fa-arrow-left" onclick="goBack()" style="cursor: pointer;"></i>
+        <h2>BDBook Store</h2>
+        <div class="ps-wallet" onclick="goToBuyPS()">
+            <span class="ps-label">PS</span>
+            <span id="ps-balance">5000</span>
+            <i class="fas fa-plus-circle" style="color: #45bd62; margin-left: 10px;"></i>
+        </div>
+    </div>
+
+    <div class="shop-tabs">
+        <div class="tab-btn active" onclick="switchTab(this, 'all')">
+            All Frame
+        </div>
+
+        <div class="tab-btn" onclick="switchTab(this, 'post')">
+            Post <span id="badge-post" class="tab-badge">0</span>
+        </div>
+
+        <div class="tab-btn" onclick="switchTab(this, 'profile')">
+            Profile <span id="badge-profile" class="tab-badge">0</span>
+        </div>
+
+        <div class="tab-btn" onclick="switchTab(this, 'vip')">
+            VIP <span id="badge-vip" class="tab-badge">0</span>
+        </div>
+
+        <div class="tab-btn my-event-tab" onclick="switchTab(this, 'my-event')">
+            <i class="fas fa-box-open"></i> My Event
+        </div>
+    </div>
+
+    <div class="shop-content">
+        <div id="items-grid" class="items-grid"></div>
+    </div>
+
+    <script src="shop.js"></script>
+</body>
+</html>

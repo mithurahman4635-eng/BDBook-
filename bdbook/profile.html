@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDBook - User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+    <div id="profile-section">
+        <div class="profile-header-card">
+            <div class="home-btn" onclick="window.location.href='newsfeed.html'"><i class="fas fa-home"></i></div>
+            
+            <div class="cover-photo-mini">
+                <video id="user-cover-video" autoplay loop muted playsinline>
+                    <source src="default.mp4">
+                </video>
+            </div>
+
+            <div class="user-main-details">
+                <div class="profile-photo-mini">
+                    <img src="" id="shop-frame" class="frame-img" style="display: none;">
+                    <div class="img-wrapper">
+                        <img src="placeholder.jpg" id="display-pic">
+                        <label for="pic-input" class="cam-icon"><i class="fas fa-camera"></i></label>
+                        <input type="file" id="pic-input" hidden onchange="uploadPhoto(event)">
+                    </div>
+                </div>
+
+                <h2 id="name-display">Mithu Rahman</h2>
+
+                <div class="horizontal-follow-section">
+                    <div class="stat-group" onclick="openFollowList('followers')">
+                        <strong id="f-count">1</strong>
+                        <span>Followers</span>
+                    </div>
+                    
+                    <div class="stat-group" onclick="openFollowList('following')">
+                        <strong id="ing-count">0</strong>
+                        <span>Following</span>
+                    </div>
+
+                    <button id="main-follow-btn" class="fb-follow-btn" onclick="handleFollow()">
+                        <i class="fas fa-user-plus"></i> Follow
+                    </button>
+                </div>
+
+                <div class="compact-info">
+                    <p id="bio-display" class="bio-text">আপনার বায়ো এখানে দেখা যাবে</p>
+                    <div class="info-line"><i class="fas fa-map-marker-alt"></i> বর্তমান শহর: <span id="loc-display">...</span></div>
+                    <div class="info-line"><i class="fas fa-heart"></i> স্ট্যাটাস: <span id="rel-display">...</span></div>
+                </div>
+
+                <button class="more-toggle-btn" onclick="toggleExtraInfo()">See More About</button>
+                <div id="extra-data-box" class="extra-info-hidden">
+                    <p><i class="fas fa-birthday-cake"></i> জন্ম তারিখ: <span id="dob-display">--/--/----</span></p>
+                    <p><i class="fas fa-venus-mars"></i> লিঙ্গ: <span id="gender-display">---</span></p>
+                </div>
+            </div>
+        </div>
+<div class="profile-feed">
+    <div class="input-trigger" onclick="window.location.href='post.html'">
+        <button>What's on your mind?</button>
+    </div>
+    <div id="user-posts"></div>
+</div>
+
+    <div id="follow-modal-overlay" class="modal-bg">
+        <div class="modal-spring-box">
+            <div class="modal-glow-line"></div> <div class="modal-header">
+                <h3 id="modal-title">List</h3>
+                <span class="close-modal-btn" onclick="closeFollowList()">&times;</span>
+            </div>
+            <div class="search-wrap-unique">
+                <i class="fas fa-search"></i>
+                <input type="text" id="user-search" onkeyup="filterUsers()" placeholder="নামের প্রথম শব্দ দিয়ে খুঁজুন...">
+            </div>
+            <div id="list-render" class="list-scroll"></div>
+        </div>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+</html>

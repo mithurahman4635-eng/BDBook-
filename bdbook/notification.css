@@ -1,0 +1,140 @@
+/* ১. সাধারণ স্টাইল */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5; /* ফেসবুক গ্রে ব্যাকগ্রাউন্ড */
+    color: #050505;
+}
+
+/* ২. হেডার অংশ */
+.header {
+    background: #ffffff;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header h2 {
+    font-size: 20px;
+    margin: 0;
+    font-weight: bold;
+}
+
+/* ৩. নোটিফিকেশন আইটেম */
+.notification-container {
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+.noti-item {
+    display: flex;
+    padding: 12px 15px;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.noti-item:active {
+    background-color: #e4e6eb;
+}
+
+/* ৪. আনরিড (নতুন) নোটিফিকেশন স্টাইল */
+.noti-item.unread {
+    background-color: #ebf5ff; /* হালকা নীল ব্যাকগ্রাউন্ড */
+}
+
+.user-avatar {
+    position: relative;
+    width: 60px;
+    height: 60px;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* ৫. আইকন ব্যাজ (লাইক, কমেন্ট, ফ্রেন্ড রিকোয়েস্ট আইকন) */
+.noti-icon-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 12px;
+    border: 2px solid white;
+}
+
+/* আইকন কালারগুলো */
+.like { background: #1877F2; }      /* নীল */
+.comment { background: #45bd62; }   /* সবুজ */
+.friend { background: #9c27b0; }    /* বেগুনী */
+.tag { background: #f5533d; }       /* লালচে কমলা */
+
+.noti-text {
+    flex: 1;
+}
+
+.noti-text p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.noti-text strong {
+    font-weight: 600;
+}
+
+.noti-time {
+    font-size: 13px;
+    color: #65676b;
+}
+
+/* ৬. নীল ডট (নতুন নোটিফিকেশনের পাশে) */
+.unread-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #1877F2;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+/* ৭. নিউজফিড ব্যাজ (নিউজফিড পেজের বেল আইকনের জন্য) */
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #fa3e3e; /* লাল রঙ */
+    color: white;
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    padding: 2px;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid white;
+}

@@ -1,0 +1,205 @@
+body {
+    background-color: #f0f2f5;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* হেডার স্টাইল */
+.shop-header {
+    background: #1c1e21;
+    color: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.ps-wallet {
+    background: #3a3b3c;
+    padding: 5px 15px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ffc107;
+    cursor: pointer; /* ক্লিক করার হাত দেখাবে */
+    transition: transform 0.2s;
+}
+
+.ps-wallet:active {
+    transform: scale(0.95); /* ক্লিক করলে একটু দেবে যাবে */
+}
+.ps-label {
+    color: #ffc107;
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+/* ট্যাব মেনু */
+.shop-tabs {
+    display: flex;
+    overflow-x: auto;
+    background: #fff;
+    padding: 10px;
+    gap: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab-btn {
+    white-space: nowrap;
+    padding: 8px 18px;
+    background: #e4e6eb;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.tab-btn.active {
+    background: #1877f2;
+    color: white;
+}
+
+.my-event-tab {
+    background: #ffd700;
+    color: #000;
+}
+
+/* গ্রিড ডিজাইন */
+.shop-content { padding: 15px; }
+.items-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.item-card {
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    position: relative; /* এটি যোগ করলাম যাতে NEW ট্যাগ কার্ডের কোণায় বসে */
+    overflow: visible; /* যাতে ট্যাগটি কার্ডের একটু বাইরে বের হয়ে থাকতে পারে */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.preview-box {
+    height: 60px;
+    background: #333;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* ফ্রেম কালার */
+.frame-golden { border: 2px solid #ffd700; box-shadow: inset 0 0 10px #ffd700; }
+.frame-blue { border: 2px solid #00d2ff; box-shadow: inset 0 0 10px #00d2ff; }
+.frame-vip { border: 2px solid #ff0055; box-shadow: inset 0 0 10px #ff0055; }
+
+.buy-btn {
+    background: #45bd62;
+    color: white;
+    border: none;
+    padding: 8px;
+    width: 100%;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.use-btn {
+    background: #1877f2;
+    color: white;
+    border: none;
+    padding: 8px;
+    width: 100%;
+    border-radius: 6px;
+    font-weight: bold;
+}
+/* ট্যাবের লাল নোটিফিকেশন নাম্বার স্টাইল */
+.tab-badge {
+    background: red;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 50%;
+    margin-left: 5px;
+    display: none; /* শুরুতে লুকানো থাকবে, নতুন আইটেম থাকলে JS এটি দেখাবে */
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+/* --- মিঠু ভাই স্পেশাল এনিমেটেড NEW ট্যাগ --- */
+.unique-new-tag {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: linear-gradient(45deg, #ff0000, #ff8000);
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 50px;
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+    animation: neonPulse 1.5s infinite;
+    border: 1px solid white;
+}
+
+@keyframes neonPulse {
+    0% { transform: scale(1); box-shadow: 0 0 5px #ff0000; }
+    50% { transform: scale(1.1); box-shadow: 0 0 20px #ff8000; }
+    100% { transform: scale(1); box-shadow: 0 0 5px #ff0000; }
+}
+
+.frame-preview-container {
+    transform: scale(0.6); /* ফ্রেম ছোট করে প্রিভিউ দেখানোর জন্য */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* My Event বা ইনভেন্টরির জন্য বাড়তি স্টাইল */
+.item-card {
+    position: relative; /* এটি অবশ্যই থাকতে হবে যাতে NEW ট্যাগটি কার্ডের ভেতরে থাকে */
+}
+/* প্রিভিউ বক্সের সাইজ ঠিক করার জন্য */
+.preview-box {
+    width: 100%;
+    height: 120px; /* মিঠু ভাই, এখানে একটি নির্দিষ্ট উচ্চতা দিলাম */
+    overflow: hidden; /* যাতে ফ্রেম বাইরে বের হতে না পারে */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f0f0f0;
+    border-radius: 8px;
+    position: relative;
+}
+
+/* ফ্রেমের ভেতরের কন্টেন্ট যাতে বড় না হয় */
+.preview-box * {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    box-sizing: border-box;
+}
+
+/* যদি HTML কোড ফ্রেম হয়, তবে তাকে ছোট করে দেখাবে */
+.frame-preview-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: scale(0.5); /* মিঠু ভাই, এটি ০.৫ করে দিলাম যাতে বড় ফ্রেমও কার্ডে ধরে */
+    transform-origin: center;
+}
