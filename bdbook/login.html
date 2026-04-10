@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BDBook</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; margin: 0; }
+        .form-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 320px; text-align: center; }
+        h2 { color: #1877f2; margin-bottom: 20px; }
+        /* ইনপুট বক্সগুলো সুন্দর দেখানোর জন্য */
+        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; outline: none; box-sizing: border-box; }
+        input:focus { border-color: #1877f2; }
+        /* লগইন বাটনের স্টাইল */
+        button { width: 100%; padding: 12px; background-color: #42b72a; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        button:hover { background-color: #36a420; }
+        .footer-link { margin-top: 15px; font-size: 14px; }
+        .footer-link a { color: #1877f2; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>BDBook লগইন</h2>
+    
+    <form action="/login" method="POST">
+        <input type="email" name="email" placeholder="আপনার Gmail লিখুন" required>
+        <input type="password" name="password" placeholder="পাসওয়ার্ড দিন" required>
+        <button type="submit">Log In</button>
+    </form>
+
+    <div class="footer-link">
+        অ্যাকাউন্ট নেই? <a href="/signup">নতুন অ্যাকাউন্ট খুলুন</a>
+    </div>
+</div>
+
+</body>
+</html>
