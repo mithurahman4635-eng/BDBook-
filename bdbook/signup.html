@@ -20,7 +20,7 @@
 <body>
 
 <div class="signup-container">
-   <h2>BDBook Test 1</h2>
+   <h2>BDBook Sign Up</h2>
     <form action="/signup" method="POST" id="signupForm">
         <div class="input-group">
             <input type="email" name="email" placeholder="আপনার Gmail দিন" required>
@@ -32,7 +32,7 @@
         </div>
 
         <div class="input-group">
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+            <input type="password" id="confirm_password" placeholder="Confirm Password" required>
             <i class="fas fa-eye toggle-password" onclick="togglePass('confirm_password', this)"></i>
         </div>
 
@@ -44,6 +44,7 @@
 </div>
 
 <script>
+    // পাসওয়ার্ড দেখানো বা লুকানোর ফাংশন
     function togglePass(id, icon) {
         const input = document.getElementById(id);
         if (input.type === "password") {
@@ -60,15 +61,15 @@
     const confirm_password = document.getElementById('confirm_password');
     const message = document.getElementById('message');
 
+    // সাবমিট করার আগে চেক
     signupForm.onsubmit = function(e) {
         if (password.value !== confirm_password.value) {
-            e.preventDefault(); // ফর্ম সাবমিট হতে দিবে না
+            e.preventDefault(); 
             message.style.display = 'block';
             return false;
         }
     };
 
-    // পাসওয়ার্ড টাইপ করার সময় মেসেজ লুকানো
     confirm_password.oninput = function() {
         message.style.display = 'none';
     };
