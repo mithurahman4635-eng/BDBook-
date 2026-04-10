@@ -29,34 +29,34 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'signup.html'));
 });
 
-// সাইন-আপ পোস্ট মেথড
 app.post('/signup', async (req, res) => {
-    console.log("------------------------------------");
-    console.log("📢 নতুন রিকোয়েস্ট এসেছে!");
-    
-    try {
-        const { email, password } = req.body;
-        
-        // নতুন ইউজার তৈরি
-        const newUser = new User({ email, password });
-        
-        // ডাটাবেসে সেভ করা
-        await newUser.save();
-        
-        console.log("✅ অভিনন্দন মিঠু ভাই! ডাটাবেসে সেভ হয়েছে:", email);
-        // সেভ হওয়ার পর আপনি চাইলে সরাসরি লগইন পেজে পাঠাতে পারেন
-        res.status(201).send("<h1>সাবাস মিঠু ভাই! নতুন ডাটা সেভ হয়েছে।</h1><br><a href='/login.html'>লগইন করতে এখানে ক্লিক করুন</a>");
-        
-    } catch (err) {
-        console.log("❌ ডাটা সেভ হয়নি!");
-        console.log("🔍 আসল কারণ হলো:", err.message);
+    // ১. জোর করে ডাটা পড়া নিশ্চিত করা
+    const email = req.body.email;
+    const password = req.body.password;
 
-        if (err.code === 11000) {
-            return res.send("<h1>এই ইমেইলটি আগে থেকেই আছে। অন্য ইমেইল দিন।</h1>");
-        }
-        res.status(500).send("সার্ভার এরর: " + err.message);
-    }
     console.log("------------------------------------");
+    console.log("🚀 বডি থেকে পাওয়া ইমেইল:", email);
+
+    // ২. যদি ইমেইল বা পাসওয়ার্ড কোনোভাবে না আসে
+    if (!email || !password) {
+        return res.send("<h1>মিঠু ভাই, ফর্ম থেকে ডাটা সার্ভারে আসছে না!</h1><p>আপনার HTML এর input বক্সে name='email' আর name='password' আছে তো?</p>");
+    }
+
+    try {
+        // ৩. সরাসরি MongoDB-তে পুশ
+        await mongoose.connection.collection('users').insertOne({
+            email: email,
+            password: password,
+            timestamp: new Date()
+        });
+
+        console.log("✅ জোর করে সেভ করা হয়েছে!");
+        res.send("<h1 style='color:green;'>সাবাস মিঠু ভাই! এবার ডাটা সেভ হতে বাধ্য হয়েছে।</h1><a href='/login.html'>লগইন করুন</a>");
+
+    } catch (err) {
+        console.log("❌ এরর:", err.message);
+        res.send("<h1>সেভ হলো না! কারণ: " + err.message + "</h1>");
+    }
 });
 
 // লগইন পেজ দেখার জন্য
