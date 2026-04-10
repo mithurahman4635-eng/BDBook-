@@ -1,35 +1,34 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // এটি যোগ করুন
 const path = require('path');
+const dotenv = require('dotenv');
 
+dotenv.config();
 const app = express();
 
-// এই লাইনগুলো খুব জরুরি ডাটা পড়ার জন্য
-app.use(cors()); 
+// ডাটা পড়ার জন্য মিডলওয়্যার (খুবই জরুরি)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static(__dirname)); // আপনার সব ফাইল চিনিয়ে দেওয়ার জন্য
+app.use(express.static(__dirname));
 
-// --- MongoDB কানেকশন ---
-const MONGO_URI = 'mongodb+srv://mithu:mithulamiya@cluster0.yujofyv.mongodb.net/BDBook?retryWrites=true&w=majority&appName=Cluster0';
+// MongoDB কানেকশন (আপনার নিজের Connection String এখানে বসাবেন)
+const mongoURI = process.env.MONGO_URI || "আপনার_মঙ্গোডিবি_লিঙ্ক_এখানে_দিন";
 
-mongoose.connect(MONGO_URI)
-  .then(() => console.log("✅ BDBook ডাটাবেস সফলভাবে কানেক্ট হয়েছে।"))
-  .catch(err => console.log("❌ কানেকশনে সমস্যা: ", err));
+mongoose.connect(mongoURI)
+    .then(() => console.log('✅ BDBook ডাটাবেসে সফলভাবে কানেক্ট হয়েছে।'))
+    .catch(err => console.log('❌ ডাটাবেস এরর:', err));
 
-// --- ইউজার স্কিমা ---
+// ইউজার স্কিমা
 const userSchema = new mongoose.Schema({
-    email: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true }
 });
 const User = mongoose.model('User', userSchema);
 
-// --- রাউটগুলো (Routes) ---
-
+// পেজ দেখানোর রাউটস
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'signup.html')); 
+    res.sendFile(path.join(__dirname, 'signup.html'));
 });
 
 app.get('/signup', (req, res) => {
@@ -40,39 +39,29 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-// সাইন-আপ রাউট
+// সাইন-আপ ডাটা সেভ করার আসল জায়গা
 app.post('/signup', async (req, res) => {
     const { email, password } = req.body;
-    console.log("📩 সার্ভারে আসা ডাটা:", email); 
+    
+    // ১. চেক করা টার্মিনালে ডাটা আসছে কি না
+    console.log("📩 সার্ভারে আসা ডাটা:", email);
 
     try {
         const newUser = new User({ email, password });
+        
+        // ২. আগে সেভ হওয়ার জন্য অপেক্ষা করবে
         await newUser.save();
         console.log("✅ ডাটাবেসে সেভ সফল হয়েছে: " + email);
-        res.redirect('/login'); 
+        
+        // ৩. সেভ হওয়ার পরেই কেবল লগইন পেজে পাঠাবে
+        res.redirect('/login');
     } catch (err) {
-        console.log("❌ সেভ এরর:", err.message);
-        res.status(500).send("ডাটা সেভ করতে সমস্যা হয়েছে।");
-    }
-});
-
-// লগইন লজিক
-app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ email });
-        if (user && user.password === password) {
-            console.log("🔑 লগইন সফল: " + email);
-            res.sendFile(path.join(__dirname, 'userfrom.html'));
-        } else {
-            res.send("<script>alert('ভুল ইমেইল বা পাসওয়ার্ড!'); window.location.href='/login';</script>");
-        }
-    } catch (err) {
-        res.status(500).send("লগইন এরর।");
+        console.log("❌ সেভ করতে সমস্যা:", err.message);
+        res.status(500).send("ডাটাবেসে সেভ হয়নি। ভুল: " + err.message);
     }
 });
 
 const PORT = 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 সার্ভার চলছে http://localhost:${PORT} এ`);
 });
