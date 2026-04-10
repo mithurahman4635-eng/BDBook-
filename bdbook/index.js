@@ -47,7 +47,7 @@ app.post('/signup', async (req, res) => {
         await newUser.save();
         
         console.log("✅ অভিনন্দন! ডাটাবেসে সেভ হয়েছে:", email);
-        res.redirect('/login.html'); 
+       res.status(201).send("<h1>সাবাস মিঠু ভাই! নতুন ডাটা সেভ হয়েছে।</h1>");
     } catch (err) {
         console.log("❌ ডাটা সেভ হয়নি!");
         console.log("🔍 সার্ভার বলছে আসল কারণ হলো:", err.message);
