@@ -30,13 +30,23 @@ app.get('/', (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-    // ১. জোর করে ডাটা পড়া নিশ্চিত করা
-    const email = req.body.email;
-    const password = req.body.password;
+    try {
+        const { email, password } = req.body;
+        const newUser = new User({ email, password });
+        
+        // ডাটাবেসে সেভ হওয়া পর্যন্ত অপেক্ষা করবে
+        await newUser.save();
+        
+        console.log("🎉 অভিনন্দন মিঠু ভাই! ডাটা সেভ হয়েছে।");
 
-    console.log("------------------------------------");
-    console.log("🚀 বডি থেকে পাওয়া ইমেইল:", email);
+        // ✅ এই লাইনটিই আপনাকে অটোমেটিক লগইন পেজে নিয়ে যাবে
+        res.redirect('/login.html'); 
 
+    } catch (err) {
+        console.log("❌ সেভ হয়নি:", err.message);
+        res.send("ভুল হয়েছে: " + err.message);
+    }
+});
     // ২. যদি ইমেইল বা পাসওয়ার্ড কোনোভাবে না আসে
     if (!email || !password) {
         return res.send("<h1>মিঠু ভাই, ফর্ম থেকে ডাটা সার্ভারে আসছে না!</h1><p>আপনার HTML এর input বক্সে name='email' আর name='password' আছে তো?</p>");
