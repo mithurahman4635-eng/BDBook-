@@ -1,22 +1,77 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
+const cors = require('cors');
+
 const app = express();
 
-// সব ফাইল স্ট্যাটিক হিসেবে সার্ভ করা (CSS, Images, JS)
-app.use(express.static(__dirname));
+// মিডলওয়্যার (Middleware)
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname)); // CSS বা JS ফাইল থাকলে লোড করার জন্য
 
-// মেইন রুটে login.html দেখানো
+// --- MongoDB কানেকশন ---
+const MONGO_URI = 'mongodb+srv://mithu:mithulamiya@cluster0.yujofyv.mongodb.net/BDBook?retryWrites=true&w=majority&appName=Cluster0';
+
+mongoose.connect(MONGO_URI)
+  .then(() => console.log("✅ BDBook ডাটাবেস সফলভাবে কানেক্ট হয়েছে।"))
+  .catch(err => console.log("❌ কানেকশনে সমস্যা: ", err));
+
+// --- ইউজার স্কিমা ---
+const userSchema = new mongoose.Schema({
+    email: { type: String, required: true },
+    password: { type: String, required: true }
+});
+const User = mongoose.model('User', userSchema);
+
+// --- রাউটগুলো (Routes) ---
+
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'signup.html')); 
+});
+
+app.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname, 'signup.html'));
+});
+
+app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-// অন্য সব পাথেও যাতে login.html দেখায় (ওয়াইল্ডকার্ড ফিক্স)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
+// সাইন-আপ রাউট
+app.post('/signup', async (req, res) => {
+    const { email, password } = req.body;
+    console.log("📩 সার্ভারে আসা ডাটা:", email); 
+
+    try {
+        const newUser = new User({ email, password });
+        await newUser.save();
+        console.log("✅ ডাটাবেসে সেভ সফল হয়েছে: " + email);
+        res.redirect('/login'); 
+    } catch (err) {
+        console.log("❌ সেভ এরর:", err.message);
+        res.status(500).send("ডাটা সেভ করতে সমস্যা হয়েছে।");
+    }
 });
 
-// পোর্ট সেটআপ
-const PORT = process.env.PORT || 3000;
+// লগইন লজিক
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (user && user.password === password) {
+            console.log("🔑 লগইন সফল: " + email);
+            res.sendFile(path.join(__dirname, 'userfrom.html'));
+        } else {
+            res.send("<script>alert('ভুল ইমেইল বা পাসওয়ার্ড!'); window.location.href='/login';</script>");
+        }
+    } catch (err) {
+        res.status(500).send("লগইন এরর।");
+    }
+});
+
+const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Server is Live at http://localhost:${PORT}`);
+    console.log(`🚀 সার্ভার চলছে http://localhost:${PORT} এ`);
 });
