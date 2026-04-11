@@ -50,28 +50,27 @@ const Profile = mongoose.model('Profile', new mongoose.Schema({
 // ==========================================
 // ৩. মেইন রাউটস (Auth)
 // ==========================================
-app.post('/signup', async (req, res) => {
-    try {
-        const newUser = new User({ email: req.body.email, password: req.body.password });
-        await newUser.save();
-        res.redirect('/login.html');
-    } catch (err) { res.send("ইমেইলটি অলরেডি আছে!"); }
-});
-
 app.post('/login', async (req, res) => {
-    const user = await User.findOne({ email: req.body.email, password: req.body.password });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email, password });
+
     if (user) {
         console.log("✅ লগইন সফল:", user.email);
-        // লগইন করার পর যদি প্রোফাইল থাকে তাহলে প্রোফাইল পেজে যাবে, না থাকলে ফর্মে যাবে
+        
+        // চেক করা হচ্ছে এই ইমেইল দিয়ে প্রোফাইল অলরেডি তৈরি করা আছে কি না
         const profileExists = await Profile.findOne({ email: user.email });
+
         if (profileExists) {
+            // প্রোফাইল থাকলে সরাসরি প্রোফাইল পেজে যাবে
             res.redirect(`/profile.html?email=${user.email}`);
         } else {
+            // প্রোফাইল না থাকলে তাকে ফর্ম পূরণ করতে পাঠানো হবে
             res.redirect(`/userfrom.html?email=${user.email}`); 
         }
-    } else { res.send("ভুল তথ্য!"); }
+    } else { 
+        res.send("ভুল তথ্য! আবার চেষ্টা করুন।"); 
+    }
 });
-
 // ==========================================
 // ৪. প্রোফাইল ম্যানেজমেন্ট (ছবিসহ সেভ ও আপডেট)
 // ==========================================
@@ -81,6 +80,11 @@ app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
         
         if (!email) return res.send("এরর: ইমেইল পাওয়া যায়নি!");
 
+        // চেক করা হচ্ছে প্রোফাইল অলরেডি আছে কি না
+        const existingProfile = await Profile.findOne({ email: email });
+        
+        // যদি প্রোফাইল আগে থেকে থাকে, তবে তাকে আর নতুন করে তৈরি করতে দেবে না
+        // এখানে শুধু আপডেট হবে (আপনার আগের লজিক অনুযায়ী)
         let updateData = { 
             name: fullname, phone, citizenship, location, relationship, dob, bio 
         };
@@ -89,15 +93,16 @@ app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
             updateData.profilePic = '/uploads/' + req.file.filename;
         }
 
-        const profile = await Profile.findOneAndUpdate(
+        await Profile.findOneAndUpdate(
             { email: email }, 
             updateData, 
             { upsert: true, new: true } 
         );
 
-        console.log("✅ প্রোফাইল আপডেট হয়েছে:", email);
-        // ডাটা সেভ হওয়ার পর সরাসরি প্রোফাইল পেজে রিডাইরেক্ট
+        console.log("✅ প্রোফাইল রেডি:", email);
+        // ডাটা সেভ হওয়ার পর সরাসরি প্রোফাইল পেজে চলে যাবে
         res.redirect(`/profile.html?email=${email}`);
+        
     } catch (err) { res.send("ভুল হয়েছে: " + err.message); }
 });
 
