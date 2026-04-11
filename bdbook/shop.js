@@ -128,6 +128,40 @@ async function useItem(source, type, id) {
     renderInventory(); 
 }
 
+// ৩. বাকি লজিকগুলো (Use, Buy, Tabs)
+async function useItem(source, type, id) {
+    let finalSource = source;
+    if (type === "code") {
+        const res = await fetch(source);
+        finalSource = await res.text();
+    }
+    localStorage.setItem('activeFrameSource', finalSource);
+    localStorage.setItem('activeFrameType', type);
+    localStorage.setItem('activeFrameId', id);
+    activeFrameId = id;
+    
+    alert("সফলভাবে সেট হয়েছে!");
+    renderInventory(); 
+    
+    // মিঠু ভাই, এই লাইনটি যোগ হলো ডাটাবেসে সেভ করার জন্য
+    syncShopWithDatabase(); 
+}
+
+function buyItem(name, source, price, id, type) {
+    if (psBalance >= price) {
+        psBalance -= price;
+        myInventory.push({ id: id, name: name, source: source, type: type });
+        localStorage.setItem('psBalance', psBalance);
+        localStorage.setItem('myInventory', JSON.stringify(myInventory));
+        updateBalanceUI();
+        
+        alert(name + " কেনা হয়েছে!");
+        fetchFramesFromGithub('post'); 
+        
+        // এখানেও সিঙ্ক ফাংশনটি বসবে
+        syncShopWithDatabase(); 
+    } else { alert("পর্যাপ্ত PS নেই!"); }
+}
 function buyItem(name, source, price, id, type) {
     if (psBalance >= price) {
         psBalance -= price;
