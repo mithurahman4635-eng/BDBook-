@@ -2,7 +2,7 @@ const githubUser = "mithurahman4635-eng";
 const repoName = "BDBook-"; 
 let lastPostCount = 0; // নতুন পোস্ট চেক করার জন্য
 
-// ১. রিয়েল ডিজিটাল ঘড়ি (ঠিক আছে)
+// ১. রিয়েল ডিজিটাল ঘড়ি (আপনার দেওয়া কোড)
 function startClock() {
     const clockElement = document.getElementById('clock');
     if(clockElement) {
@@ -16,13 +16,13 @@ function startClock() {
     }
 }
 
-// ২. ফ্রেম রেন্ডার লজিক (ঠিক আছে)
+// ২. ফ্রেম রেন্ডার লজিক (আপনার দেওয়া কোড)
 function createSafeFrame(code, userName, userAvatar) {
     const content = `<html><head><style>body { margin:0; padding:0; display:flex; justify-content:center; align-items:center; overflow:hidden; background:transparent; font-family: Arial, sans-serif; height: 40px; width: 100vw; } .frame-wrapper { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; } .kill-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 99; pointer-events: none; } .kill-avatar { width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; overflow: hidden; margin-right: 10px; background: #444; flex-shrink: 0; } .kill-info { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.1; } .kill-name { font-weight: bold; font-size: 13px; text-transform: uppercase; display: block; white-space: nowrap; } .kill-sub { font-size: 8px; white-space: nowrap; opacity: 0.9; }</style></head><body><div class="frame-wrapper">${code}<div class="kill-overlay"><div class="kill-avatar"><img src="${userAvatar}" style="width:100%; height:100%; object-fit:cover;"></div><div class="kill-info"><span class="kill-name">${userName}</span><span class="kill-sub">Shared a New Post!</span></div></div></div></body></html>`;
     return `<iframe srcdoc='${content.replace(/'/g, "&apos;")}' style="width: 100vw; height: 40px; border: none; overflow: hidden; pointer-events: none; display: block; margin: 0; padding: 0;"></iframe>`;
 }
 
-// ৩. ডাটাবেস থেকে নিউজফিড লোড করার ফাংশন (মিঠু ভাই, এই পার্টটা আপনার কোডে ছিল না)
+// ৩. ডাটাবেস থেকে নিউজফিড লোড করার ফাংশন (এডিট করা হয়েছে শুধু ডাটা দেখানোর জন্য)
 async function loadNewsfeed() {
     try {
         const response = await fetch('/api/newsfeed');
@@ -38,6 +38,7 @@ async function loadNewsfeed() {
         const container = document.getElementById('all-posts-feed');
         if (!container) return;
 
+        // আপনার স্টাইল অনুযায়ী ডাটাবেসের পোস্ট বসানো হচ্ছে
         container.innerHTML = posts.map(post => `
             <div class="post-card" style="background:white; margin:15px; padding:15px; border-radius:12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
@@ -56,7 +57,7 @@ async function loadNewsfeed() {
     } catch (e) { console.log("Newsfeed Load Error:", e); }
 }
 
-// ৪. কিলিং মেসেজ ট্রিগার (ঠিক আছে)
+// ৪. কিলিং মেসেজ ট্রিগার (আপনার দেওয়া কোড)
 function triggerKillMessage(userName, userAvatar) {
     const box = document.getElementById('kill-message-box');
     if (!box) return;
@@ -77,7 +78,7 @@ function triggerKillMessage(userName, userAvatar) {
     setTimeout(() => box.classList.remove('kill-visible'), 4500);
 }
 
-// ৫. ইভেন্ট চেক ও নেভিগেশন (ঠিক আছে)
+// ৫. ইভেন্ট চেক ও নেভিগেশন (আপনার দেওয়া কোড)
 async function checkNewEvents() {
     try {
         const response = await fetch(`https://api.github.com/repos/${githubUser}/${repoName}/contents/frames/post`);
@@ -101,10 +102,10 @@ function goToProfile() { window.location.href = "profile.html"; }
 function goToCreatePost() { window.location.href = "post.html"; }
 function openShop() { window.location.href = "shop.html"; }
 
-// ৬. পেজ লোড এক্সিকিউশন
+// ৬. পেজ লোড এক্সিকিউশন (আপনার দেওয়া স্ট্রাকচার)
 window.onload = function() {
     startClock(); 
     checkNewEvents();
-    loadNewsfeed(); // ডাটাবেস থেকে পোস্ট আনবে
-    setInterval(loadNewsfeed, 10000); // ১০ সেকেন্ড পর পর নতুন পোস্ট চেক করবে
+    loadNewsfeed(); // এখানে কল করা হয়েছে
+    setInterval(loadNewsfeed, 10000); 
 };
