@@ -15,7 +15,6 @@
         .input-wrapper { position: relative; display: flex; align-items: center; }
         .input-wrapper i { position: absolute; left: 15px; font-size: 20px; }
         
-        /* আপনার স্ক্রিনশটের মতো রঙিন আইকন */
         .fa-user-circle { color: #ff4757; } .fa-phone-alt { color: #2ed573; } .fa-flag { color: #3742fa; }
         .fa-map-marked-alt { color: #ffa502; } .fa-heart { color: #ff6b81; } .fa-calendar-alt { color: #6a5acd; }
         .fa-address-card { color: #1e90ff; }
@@ -23,11 +22,9 @@
         input, select, textarea { width: 100%; padding: 14px 15px 14px 50px; border: 1px solid #f1f2f6; border-radius: 15px; font-size: 15px; background-color: #f7f8fa; outline: none; box-sizing: border-box; }
         .submit-btn { width: 100%; padding: 16px; background: linear-gradient(to right, #6a5acd, #483d8b); color: white; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 5px 15px rgba(106, 90, 205, 0.3); }
 
-        /* Step 2: ফটো ফ্রেম স্টাইল */
         #photo-step { display: none; }
         .photo-frame { width: 170px; height: 170px; border: 5px solid #6a5acd; border-radius: 50%; margin: 20px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f7f8fa; cursor: pointer; position: relative; }
         .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .footer-copyright { margin-top: 25px; font-size: 11px; color: #a4b0be; }
     </style>
 </head>
 <body>
@@ -35,57 +32,67 @@
 <div class="form-container">
     <form id="profileForm" action="/save-profile" method="POST" enctype="multipart/form-data">
         
+        <input type="hidden" name="email" id="hiddenEmail">
+
         <div id="info-step">
             <div class="main-top-icon"><i class="fas fa-edit"></i></div>
-            <div class="form-title">Form</div>
+            <div class="form-title">BDBook Profile Form</div>
             
             <div class="input-group"><label>Full Name</label><div class="input-wrapper"><i class="fas fa-user-circle"></i><input type="text" name="fullname" placeholder="Enter Full Name" required></div></div>
             <div class="input-group"><label>Phone Number</label><div class="input-wrapper"><i class="fas fa-phone-alt"></i><input type="tel" name="phone" placeholder="Enter Phone Number"></div></div>
             <div class="input-group"><label>Citizenship</label><div class="input-wrapper"><i class="fas fa-flag"></i><input type="text" name="citizenship" placeholder="Enter Country"></div></div>
             <div class="input-group"><label>Current Location</label><div class="input-wrapper"><i class="fas fa-map-marked-alt"></i><input type="text" name="location" placeholder="Current City"></div></div>
-            <div class="input-group"><label>Relationship Status</label><div class="input-wrapper"><i class="fas fa-heart"></i><select name="relationship"><option>Single</option><option>Married</option></select></div></div>
+            <div class="input-group"><label>Relationship Status</label><div class="input-wrapper"><i class="fas fa-heart"></i><select name="relationship"><option>Single</option><option>Married</option><option>In a relationship</option></select></div></div>
             <div class="input-group"><label>Date of Birth</label><div class="input-wrapper"><i class="fas fa-calendar-alt"></i><input type="date" name="dob"></div></div>
-            <div class="input-group"><label>Tell us about yourself (Bio)</label><div class="input-wrapper"><i class="fas fa-address-card" style="top: 18px;"></i><textarea name="bio" placeholder="Write something about your life..."></textarea></div></div>
+            <div class="input-group"><label>Bio</label><div class="input-wrapper"><i class="fas fa-address-card" style="top: 18px;"></i><textarea name="bio" placeholder="Write something about yourself..."></textarea></div></div>
 
             <button type="button" class="submit-btn" onclick="nextStep()">Next</button>
         </div>
 
         <div id="photo-step">
-    <div class="form-title">Profile Photo</div>
-    <p style="color: #666; font-size: 14px;">ফ্রেমে ক্লিক করে ছবি দিন</p>
-    
-    <label for="myImg" style="cursor: pointer; display: block;">
-        <div style="width: 170px; height: 170px; border: 5px solid #6a5acd; border-radius: 50%; margin: 20px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f7f8fa; position: relative;">
+            <div class="form-title">Profile Photo</div>
+            <p style="color: #666; font-size: 14px;">ফ্রেমে ক্লিক করে ছবি দিন</p>
             
-            <i class="fas fa-camera" id="camIcon" style="font-size: 45px; color: #6a5acd; position: absolute;"></i>
-            
-            <img id="preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+            <label for="myImg" style="cursor: pointer; display: block;">
+                <div style="width: 170px; height: 170px; border: 5px solid #6a5acd; border-radius: 50%; margin: 20px auto; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f7f8fa; position: relative;">
+                    <i class="fas fa-camera" id="camIcon" style="font-size: 45px; color: #6a5acd; position: absolute;"></i>
+                    <img id="preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                </div>
+            </label>
+
+            <input type="file" id="myImg" name="profilePic" accept="image/*" style="display:none;" onchange="previewFile(event)">
+
+            <button type="submit" class="submit-btn">Create Profile</button>
         </div>
-    </label>
-
-    <input type="file" id="myImg" name="profilePic" accept="image/*" style="display:none;" onchange="previewFile(event)" required>
-
-    <button type="submit" class="submit-btn">Create Profile</button>
+    </form>
 </div>
 
 <script>
-    // ছবি সিলেক্ট করার পর সেটি ফ্রেমের ভেতর দেখানোর ফাংশন
+    // URL থেকে ইমেইল নিয়ে ইনপুটে বসানো (এটা না থাকলে এডিট হবে না)
+    const urlParams = new URLSearchParams(window.location.search);
+    const userEmail = urlParams.get('email');
+    if (userEmail) {
+        document.getElementById('hiddenEmail').value = userEmail;
+    } else {
+        alert("ইমেইল পাওয়া যায়নি! দয়া করে আবার লগইন করে আসুন।");
+    }
+
     function previewFile(event) {
         var reader = new FileReader();
         reader.onload = function() {
             var output = document.getElementById('preview');
             var icon = document.getElementById('camIcon');
-            
             output.src = reader.result;
-            output.style.display = 'block'; // ছবি দেখাবে
-            icon.style.display = 'none';    // আইকন লুকিয়ে ফেলবে
+            output.style.display = 'block';
+            icon.style.display = 'none';
         };
         reader.readAsDataURL(event.target.files[0]);
     }
 
-    // Next বাটনে ক্লিক করলে ফটো স্টেপ দেখানোর ফাংশন
     function nextStep() {
         document.getElementById('info-step').style.display = 'none';
         document.getElementById('photo-step').style.display = 'block';
     }
 </script>
+</body>
+</html>
