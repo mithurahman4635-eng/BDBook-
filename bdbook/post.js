@@ -1,3 +1,26 @@
+document.addEventListener("DOMContentLoaded", async () => {
+    // লোকাল স্টোরেজ থেকে ইমেইল নিচ্ছে
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (userEmail) {
+        try {
+            const response = await fetch(`/api/get-profile?email=${userEmail}`);
+            const data = await response.json();
+            
+            if (data) {
+                // প্রোফাইল ছবি সেট করা
+                if (data.profilePic) {
+                    document.getElementById('profile-img').src = data.profilePic;
+                }
+                // প্রোফাইল নাম সেট করা
+                const nameHeader = document.querySelector('.user-meta h4');
+                nameHeader.innerHTML = `${data.name} <span id="dynamic-tags" class="tags-inline"></span>`;
+            }
+        } catch (err) {
+            console.log("প্রোফাইল লোড করা যায়নি", err);
+        }
+    }
+});
 window.onload = async () => {
     const email = localStorage.getItem('userEmail');
     if (email) {
