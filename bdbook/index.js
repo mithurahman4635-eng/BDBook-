@@ -49,6 +49,8 @@ const Post = mongoose.model('Post', new mongoose.Schema({
     postMedia: String, 
     mediaType: String,      
     activeFrame: String, 
+    type: { type: String, default: "normal" }, 
+    frameCode: String, 
     likes: { type: Array, default: [] }, 
     createdAt: { type: Date, default: Date.now }
 }));
