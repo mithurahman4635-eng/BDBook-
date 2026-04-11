@@ -1,3 +1,19 @@
+window.onload = async () => {
+    const email = localStorage.getItem('userEmail');
+    if (email) {
+        try {
+            const response = await fetch(`/api/get-profile?email=${email}`);
+            const data = await response.json();
+            if (data) {
+                document.getElementById('profile-img').src = data.profilePic || 'https://via.placeholder.com/100';
+                // h4 এর ভেতর আপনার নাম সেট করা
+                document.querySelector('.user-meta h4').innerHTML = `${data.name} <span id="dynamic-tags" class="tags-inline"></span>`;
+            }
+        } catch (err) {
+            console.error("প্রোফাইল লোড করতে সমস্যা:", err);
+        }
+    }
+};
 // ১. ইনপুট হ্যান্ডলিং
 function handleInput() {
     const editor = document.getElementById('post-editor');
