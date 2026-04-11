@@ -14,11 +14,9 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname));
 app.use('/uploads', express.static('uploads')); 
 
-// আপনার দেওয়া MongoDB কানেকশন স্ট্রিং
 const mongoURI = "mongodb+srv://mithu:mithulamiya@cluster0.yujofyv.mongodb.net/BDBook?retryWrites=true&w=majority"; 
 mongoose.connect(mongoURI).then(() => console.log('✅ BDBook Database Connected!'));
 
-// ছবি সেভ করার লোকেশন কনফিগারেশন
 const storage = multer.diskStorage({
     destination: './uploads/',
     filename: (req, file, cb) => {
@@ -28,7 +26,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // ==========================================
-// ২. ডাটাবেস মডেল (User & Profile)
+// ২. ডাটাবেস মডেল
 // ==========================================
 const User = mongoose.model('User', new mongoose.Schema({
     email: { type: String, required: true, unique: true },
@@ -48,31 +46,42 @@ const Profile = mongoose.model('Profile', new mongoose.Schema({
 }));
 
 // ==========================================
-// ৩. মেইন রাউটস (Auth)
+// ৩. মেইন রাউটস (Auth) - এখানে ঠিক করা হয়েছে
 // ==========================================
+
+// --- সাইনআপ রাউট (এটি আপনার কোড থেকে গায়েব ছিল) ---
+app.post('/signup', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const newUser = new User({ email, password });
+        await newUser.save();
+        console.log("✅ নতুন ইউজার তৈরি:", email);
+        res.redirect('/login.html'); // সাইনআপ হলে লগইন পেজে যাবে
+    } catch (err) { 
+        res.send("ইমেইলটি অলরেডি আছে অথবা ডাটাবেস এরর!"); 
+    }
+});
+
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email, password });
 
     if (user) {
         console.log("✅ লগইন সফল:", user.email);
-        
-        // চেক করা হচ্ছে এই ইমেইল দিয়ে প্রোফাইল অলরেডি তৈরি করা আছে কি না
         const profileExists = await Profile.findOne({ email: user.email });
 
         if (profileExists) {
-            // প্রোফাইল থাকলে সরাসরি প্রোফাইল পেজে যাবে
             res.redirect(`/profile.html?email=${user.email}`);
         } else {
-            // প্রোফাইল না থাকলে তাকে ফর্ম পূরণ করতে পাঠানো হবে
             res.redirect(`/userfrom.html?email=${user.email}`); 
         }
     } else { 
-        res.send("ভুল তথ্য! আবার চেষ্টা করুন।"); 
+        res.send("ভুল ইমেইল বা পাসওয়ার্ড! আবার চেষ্টা করুন।"); 
     }
 });
+
 // ==========================================
-// ৪. প্রোফাইল ম্যানেজমেন্ট (ছবিসহ সেভ ও আপডেট)
+// ৪. প্রোফাইল ম্যানেজমেন্ট
 // ==========================================
 app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
     try {
@@ -80,11 +89,6 @@ app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
         
         if (!email) return res.send("এরর: ইমেইল পাওয়া যায়নি!");
 
-        // চেক করা হচ্ছে প্রোফাইল অলরেডি আছে কি না
-        const existingProfile = await Profile.findOne({ email: email });
-        
-        // যদি প্রোফাইল আগে থেকে থাকে, তবে তাকে আর নতুন করে তৈরি করতে দেবে না
-        // এখানে শুধু আপডেট হবে (আপনার আগের লজিক অনুযায়ী)
         let updateData = { 
             name: fullname, phone, citizenship, location, relationship, dob, bio 
         };
@@ -99,8 +103,7 @@ app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
             { upsert: true, new: true } 
         );
 
-        console.log("✅ প্রোফাইল রেডি:", email);
-        // ডাটা সেভ হওয়ার পর সরাসরি প্রোফাইল পেজে চলে যাবে
+        console.log("✅ প্রোফাইল সেভ হয়েছে:", email);
         res.redirect(`/profile.html?email=${email}`);
         
     } catch (err) { res.send("ভুল হয়েছে: " + err.message); }
@@ -109,8 +112,6 @@ app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
 // ==========================================
 // ৫. প্রোফাইল ডাটা রিট্রিভ (নতুন ফিচার)
 // ==========================================
-
-// profile.js থেকে এই API কল করে ডাটা নেওয়া হবে
 app.get('/api/get-profile', async (req, res) => {
     try {
         const email = req.query.email;
