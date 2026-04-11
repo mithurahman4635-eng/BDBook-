@@ -1,3 +1,18 @@
+// ১. আইডি চেনার মাস্টার লজিক
+const urlParams = new URLSearchParams(window.location.search);
+let userEmail = urlParams.get('email'); // প্রথমে লিংকে খুঁজবে
+
+if (!userEmail) {
+    userEmail = localStorage.getItem('userEmail'); // লিংকে না পেলে মেমোরিতে খুঁজবে
+} else {
+    localStorage.setItem('userEmail', userEmail); // লিংকে পেলে সেটা মেমোরিতেও সেভ করে রাখবে
+}
+
+// যদি মেমোরিতেও না থাকে, তবেই লগইন পেজে পাঠাবে (মিঠু রহমান ধরবে না)
+if (!userEmail) {
+    alert("আপনার সেশন শেষ! আবার লগইন করুন।");
+    window.location.href = "login.html";
+}
 document.addEventListener("DOMContentLoaded", async () => {
     // ১. ইউআরএল থেকে ইমেইল খুঁজবে, না পেলে লোকাল স্টোরেজ থেকে নেবে
     const urlParams = new URLSearchParams(window.location.search);
