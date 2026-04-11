@@ -38,7 +38,7 @@ const Profile = mongoose.model('Profile', new mongoose.Schema({
 const Post = mongoose.model('Post', new mongoose.Schema({
     userEmail: String, userName: String, userPic: String,        
     postText: String, postMedia: String, mediaType: String,      
-    activeFrame: String, // ⚠️ মিঠু ভাই, এই লাইনটি ফ্রেম সেভ করার জন্য যোগ করা হয়েছে
+    activeFrame: String, 
     likes: { type: Array, default: [] }, 
     createdAt: { type: Date, default: Date.now }
 }));
@@ -63,11 +63,13 @@ app.post('/login', async (req, res) => {
 
 // ৪. পোস্ট ও প্রোফাইল API
 
-// নতুন পোস্ট তৈরি (এখানে activeFrame যোগ করা হয়েছে)
+// মিঠু ভাই, এখানে কনসোল লগ যোগ করা হয়েছে যাতে টার্মিনালে নড়াচড়া দেখা যায়
 app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
+    console.log("📥 নতুন পোস্টের রিকোয়েস্ট এসেছে..."); 
     try {
-        const { email, text, activeFrame } = req.body; // ফ্রন্টএন্ড থেকে ফ্রেম ডাটা আসবে
+        const { email, text, activeFrame } = req.body; 
         const user = await Profile.findOne({ email: email });
+        
         const newPost = new Post({
             userEmail: email,
             userName: user ? user.name : "Mithu Rahman",
@@ -75,11 +77,18 @@ app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
             postText: text,
             postMedia: req.file ? '/uploads/' + req.file.filename : "",
             mediaType: req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : 'text',
-            activeFrame: activeFrame || "default" // ⚠️ এখানে ফ্রেম সেভ হবে
+            activeFrame: activeFrame || "default" 
         });
+
         await newPost.save();
-        res.json({ status: "success" });
-    } catch (err) { res.status(500).json({ status: "error", message: err.message }); }
+        console.log("✅ পোস্ট ডাটাবেসে সেভ হয়েছে: ", text.substring(0, 20) + "..."); 
+        
+        // ফ্রন্টএন্ডকে কনফার্মেশন পাঠানো
+        res.status(200).json({ status: "success", message: "Post Published!" });
+    } catch (err) { 
+        console.log("❌ পোস্ট সেভ করতে ভুল হয়েছে:", err.message);
+        res.status(500).json({ status: "error", message: err.message }); 
+    }
 });
 
 // নিউজফিড (সব পোস্ট)
