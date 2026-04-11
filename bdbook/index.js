@@ -44,7 +44,23 @@ const Profile = mongoose.model('Profile', new mongoose.Schema({
     bio: String,
     profilePic: String 
 }));
-
+const Post = mongoose.model('Post', new mongoose.Schema({
+    userEmail: String,      
+    userName: String,       
+    userPic: String,        
+    postText: String,       
+    postMedia: String,      
+    mediaType: String,      
+    likes: { type: Array, default: [] }, 
+    comments: [{
+        user: String,
+        userName: String,
+        text: String,
+        replies: Array,
+        date: { type: Date, default: Date.now }
+    }],
+    createdAt: { type: Date, default: Date.now }
+}));
 // ==========================================
 // ৩. মেইন রাউটস (Auth) - এখানে ঠিক করা হয়েছে
 // ==========================================
@@ -108,7 +124,48 @@ app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
         
     } catch (err) { res.send("ভুল হয়েছে: " + err.message); }
 });
+// নতুন পোস্ট তৈরি করার API
+app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
+    try {
+        const { email, text } = req.body;
+        // ইউজারের তথ্য প্রোফাইল থেকে খুঁজে আনা হচ্ছে
+        const user = await Profile.findOne({ email: email });
 
+        let mediaPath = "";
+        let type = "text";
+
+        if (req.file) {
+            mediaPath = '/uploads/' + req.file.filename;
+            // ভিডিও নাকি ছবি সেটা চেক করা হচ্ছে
+            type = req.file.mimetype.startsWith('video') ? 'video' : 'image';
+        }
+
+        const newPost = new Post({
+            userEmail: email,
+            userName: user ? user.name : "BDBook User",
+            userPic: user ? user.profilePic : "",
+            postText: text,
+            postMedia: mediaPath,
+            mediaType: type
+        });
+
+        await newPost.save();
+        res.json({ status: "success", message: "পোস্ট সফল হয়েছে!" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// নিউজফিডের জন্য সব পোস্ট পাঠানোর API
+app.get('/api/newsfeed', async (req, res) => {
+    try {
+        // নতুন পোস্টগুলো সবার আগে দেখাবে (sort by createdAt)
+        const posts = await Post.find().sort({ createdAt: -1 }); 
+        res.json(posts);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
 // ==========================================
 // ৫. প্রোফাইল ডাটা রিট্রিভ (নতুন ফিচার)
 // ==========================================
