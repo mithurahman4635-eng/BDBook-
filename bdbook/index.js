@@ -207,6 +207,15 @@ app.get('/profile', (req, res) => {
 app.get('/newsfeed', (req, res) => {
     res.sendFile(path.join(__dirname, 'newsfeed.html'));
 });
+// পোস্ট পেজ ওপেন করার জন্য রাউট
+app.get('/post', (req, res) => {
+    res.sendFile(path.join(__dirname, 'post.html'));
+});
+
+// নিউজফিড পেজ ওপেন করার জন্য রাউট
+app.get('/newsfeed', (req, res) => {
+    res.sendFile(path.join(__dirname, 'newsfeed.html'));
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 BDBook রানিং পোর্টে: ${PORT}`);
