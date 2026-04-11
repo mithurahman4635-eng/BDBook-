@@ -71,13 +71,13 @@ app.post('/login', async (req, res) => {
     } else { res.send("ভুল ইমেইল বা পাসওয়ার্ড!"); }
 });
 
-// ৪. পোস্ট তৈরি করার API (সংশোধিত অংশ)
+// ৪. পোস্ট তৈরি করার API (সংশোধিত)
 app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
     console.log("📥 নতুন পোস্টের রিকোয়েস্ট এসেছে..."); 
     try {
-        const { email, text, activeFrame } = req.body;
+        // মিঠু ভাই, এখান থেকেই ডাটাগুলো রিসিভ হবে 👇
+        const { email, text, frameCode, type } = req.body; 
         
-        // লগইন করা ইউজারের প্রোফাইল খুঁজে বের করা (Pori আইডি ঠিক করার জন্য)
         const user = await Profile.findOne({ email: email });
 
         const newPost = new Post({
@@ -87,9 +87,19 @@ app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
             postText: text,
             postMedia: req.file ? '/uploads/' + req.file.filename : "",
             mediaType: req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : 'text',
-            activeFrame: activeFrame || "default"
+            // 👇 এই ডাটাগুলো এখন ডাটাবেসে যাবে
+            frameCode: frameCode || null, 
+            type: type || 'kill' 
         });
 
+        await newPost.save();
+        console.log("✅ কিল মেসেজ ডাটাবেসে সেভ হয়েছে!"); 
+        res.status(200).json({ status: "success", message: "Post Published!" });
+    } catch (err) {
+        console.log("❌ এরর:", err.message);
+        res.status(500).json({ status: "error", message: err.message });
+    }
+});
         await newPost.save();
         console.log("✅ পোস্ট ডাটাবেসে সেভ হয়েছে!"); 
         res.status(200).json({ status: "success", message: "Post Published!" });
