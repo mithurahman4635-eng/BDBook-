@@ -22,7 +22,7 @@ function createSafeFrame(code, userName, userAvatar) {
     return `<iframe srcdoc='${content.replace(/'/g, "&apos;")}' style="width: 100vw; height: 40px; border: none; overflow: hidden; pointer-events: none; display: block; margin: 0; padding: 0;"></iframe>`;
 }
 
-// ৩. ডাটাবেস থেকে নিউজফিড লোড করা
+// ৩. ডাটাবেস থেকে নিউজফিড লোড করা (সংশোধিত)
 async function loadNewsfeed() {
     try {
         const response = await fetch('/api/newsfeed');
@@ -31,14 +31,14 @@ async function loadNewsfeed() {
         // রিয়েল-টাইম কিলিং মেসেজ ট্রিগার
         if (posts.length > lastPostCount && lastPostCount !== 0) {
             const latest = posts[0];
-            triggerKillMessage(latest.userName, latest.userPic || "https://via.placeholder.com/100");
+            // এখানে পরিবর্তন: পোস্টের সাথে থাকা frameCode পাঠানো হচ্ছে
+            triggerKillMessage(latest.userName, latest.userPic || "https://via.placeholder.com/100", latest.frameCode);
         }
         lastPostCount = posts.length;
 
         const container = document.getElementById('all-posts-feed');
         if (!container) return;
 
-        // ডাটাবেস থেকে পাওয়া পোস্টগুলো আপনার ডিজাইনের কার্ডে বসানো
         container.innerHTML = posts.map(post => `
             <div class="post-card">
                 <div class="post-header">
@@ -65,26 +65,23 @@ async function loadNewsfeed() {
     } catch (e) { console.log("Newsfeed Load Error:", e); }
 }
 
-// ৪. কিলিং মেসেজ ট্রিগার
-function triggerKillMessage(userName, userAvatar) {
+// ৪. কিলিং মেসেজ ট্রিগার (সংশোধিত)
+function triggerKillMessage(userName, userAvatar, frameCode) {
     const box = document.getElementById('kill-message-box');
     if (!box) return;
-
-    const savedFrame = localStorage.getItem('activeFrameSource');
-    const frameType = localStorage.getItem('activeFrameType');
 
     box.innerHTML = ''; 
     box.style.display = 'block'; 
 
-    if (savedFrame && frameType === "code") {
-        box.innerHTML = createSafeFrame(savedFrame, userName, userAvatar);
+    // লজিক: যদি ডাটাবেস থেকে ফ্রেম কোড আসে তবে সেটা দেখাবে, না থাকলে ডিফল্ট লাল মেসেজ
+    if (frameCode) {
+        box.innerHTML = createSafeFrame(frameCode, userName, userAvatar);
     } else {
-        box.innerHTML = `<div class="kill-content" style="padding: 0 10px; height: 40px; display: flex; align-items:center; gap:13px; width:100%; justify-content:center;"><div class="kill-avatar" style="width:30px; height:30px; border-radius:50%; border:2px solid white; overflow:hidden;"><img src="${userAvatar}" style="width:100%; height:100%; object-fit:cover;"></div><div class="kill-text"><span style="color:white; font-weight:bold; text-transform:uppercase; font-size:13px;">${userName}</span><span style="color:#ff4444; margin-left:8px; font-size:10px;">Shared a Post!</span></div></div>`;
+        box.innerHTML = `<div class="kill-content" style="padding: 0 10px; height: 40px; display: flex; align-items:center; gap:13px; width:100%; justify-content:center; background:rgba(255,0,0,0.8); border-radius:8px;"><div class="kill-avatar" style="width:30px; height:30px; border-radius:50%; border:2px solid white; overflow:hidden;"><img src="${userAvatar}" style="width:100%; height:100%; object-fit:cover;"></div><div class="kill-text"><span style="color:white; font-weight:bold; text-transform:uppercase; font-size:13px;">${userName}</span><span style="color:yellow; margin-left:8px; font-size:10px;">Shared a Post!</span></div></div>`;
     }
 
     setTimeout(() => box.style.display = 'none', 4500);
 }
-
 // ৫. ইভেন্ট চেক ও নেভিগেশন
 async function checkNewEvents() {
     try {
