@@ -34,43 +34,33 @@
 
 <script>
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault(); // পেজ রিফ্রেশ হওয়া আটকাবে
+        e.preventDefault();
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
 
         try {
-            // ১. সার্ভারে ডাটা পাঠানো (আপনার ডাটাবেস চেক করার জন্য)
             const response = await fetch('/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify(data)
             });
 
-            const result = await response.json();
-
+            // যদি সার্ভার কানেক্ট হয়
             if (response.ok) {
-                // ২. মিঠু ভাই, এটাই সেই জাদুকরী লাইন যা পরী আইডিকে মনে রাখবে
-                localStorage.setItem('userEmail', email);
-
-                alert("লগইন সফল হয়েছে!");
-
-                // ৩. নতুন ইউজারের জন্য চেক: যদি প্রোফাইল না থাকে তবে ফরম পেজে যাবে
-                // আর প্রোফাইল থাকলে সরাসরি নিউজফিডে যাবে
-                if (result.redirectUrl) {
-                    window.location.href = result.redirectUrl;
-                } else {
-                    window.location.href = `/newsfeed.html?email=${email}`;
-                }
+                // মিঠু ভাই, এই এক লাইনেই আইডি চেনার ম্যাজিক
+                localStorage.setItem('userEmail', data.email);
+                
+                alert("লগইন সফল!");
+                window.location.href = `/newsfeed.html?email=${data.email}`;
             } else {
-                alert(result.message || "ভুল ইমেইল বা পাসওয়ার্ড!");
+                alert("ইমেইল বা পাসওয়ার্ড ভুল!");
             }
         } catch (err) {
-            console.error("Error:", err);
-            alert("সার্ভার কানেক্ট করতে সমস্যা হচ্ছে!");
+            // যদি সার্ভার কানেক্ট না হয় (টার্মাক্স বন্ধ থাকলে এটা আসবে)
+            alert("সার্ভার চালু নেই! টার্মিনালে node index.js লিখে চালু করুন।");
         }
     });
 </script>
-
 </body>
 </html>
