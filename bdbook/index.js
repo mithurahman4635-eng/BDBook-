@@ -204,6 +204,9 @@ app.get('/signup', (req, res) => {
 app.get('/profile', (req, res) => {
     res.sendFile(path.join(__dirname, 'profile.html'));
 });
+app.get('/newsfeed', (req, res) => {
+    res.sendFile(path.join(__dirname, 'newsfeed.html'));
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 BDBook রানিং পোর্টে: ${PORT}`);
