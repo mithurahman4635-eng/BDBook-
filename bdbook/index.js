@@ -128,9 +128,25 @@ app.get('/api/get-profile', async (req, res) => {
     }
 });
 
+
 // ==========================================
-// ৬. সার্ভার স্টার্ট
+// ৭. পেজ নেভিগেশন রাউটস (সহজে এক পেজ থেকে অন্য পেজে যাওয়ার জন্য)
 // ==========================================
+
+// লগইন পেজ দেখার জন্য
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// সাইনআপ পেজ দেখার জন্য
+app.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname, 'signup.html'));
+});
+
+// প্রোফাইল পেজ দেখার জন্য (সরাসরি লিঙ্ক)
+app.get('/profile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'profile.html'));
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 BDBook রানিং পোর্টে: ${PORT}`);
