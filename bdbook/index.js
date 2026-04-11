@@ -52,7 +52,6 @@ const Post = mongoose.model('Post', new mongoose.Schema({
     type: { type: String, default: "normal" }, 
     frameCode: String, 
     likes: { type: Array, default: [] }, 
-    createdAt: { type: Date, default: Date.now }
 }));
 
 // ৩. অথেনটিকেশন (Signup/Login)
