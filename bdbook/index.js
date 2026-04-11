@@ -2,21 +2,32 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
+const multer = require('multer'); // ছবি হ্যান্ডেল করার জন্য
 
 const app = express();
 
 // ==========================================
-// ১. সেটিংস ও মিডলওয়্যার (এখানে হাত দেওয়ার দরকার নেই)
+// ১. সেটিংস ও মিডলওয়্যার
 // ==========================================
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
+app.use('/uploads', express.static('uploads')); // ছবিগুলো দেখানোর পারমিশন
 
 const mongoURI = "mongodb+srv://mithu:mithulamiya@cluster0.yujofyv.mongodb.net/BDBook?retryWrites=true&w=majority"; 
 mongoose.connect(mongoURI).then(() => console.log('✅ BDBook Database Connected!'));
 
+// ছবি সেভ করার লোকেশন কনফিগারেশন
+const storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: (req, file, cb) => {
+        cb(null, 'profile-' + Date.now() + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage: storage });
+
 // ==========================================
-// ২. ডাটাবেস মডেল (নতুন টেবিল লাগলে এখানে বাড়াবেন)
+// ২. ডাটাবেস মডেল (User & Profile)
 // ==========================================
 const User = mongoose.model('User', new mongoose.Schema({
     email: { type: String, required: true, unique: true },
@@ -26,69 +37,81 @@ const User = mongoose.model('User', new mongoose.Schema({
 const Profile = mongoose.model('Profile', new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     name: String,
-    bio: String,
     phone: String,
-    location: String
+    citizenship: String,
+    location: String,
+    relationship: String,
+    dob: String,
+    bio: String,
+    profilePic: String // ছবির পাথ এখানে থাকবে
 }));
 
 // ==========================================
-// ৩. মেইন রাউটস (সাইন-আপ ও লগইন)
+// ৩. মেইন রাউটস (Auth)
 // ==========================================
 app.post('/signup', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const newUser = new User({ email, password });
+        const newUser = new User({ email: req.body.email, password: req.body.password });
         await newUser.save();
         res.redirect('/login.html');
-    } catch (err) { res.send("ইমেইলটি আগে ব্যবহার করা হয়েছে!"); }
+    } catch (err) { res.send("ইমেইলটি অলরেডি আছে!"); }
 });
 
 app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email, password });
+    const user = await User.findOne({ email: req.body.email, password: req.body.password });
     if (user) {
-        res.redirect(`/userfrom.html?email=${email}`); // আপনার ফাইলের বানান অনুযায়ী
-    } else {
-        res.send("ভুল তথ্য!");
-    }
+        console.log("✅ লগইন সফল:", user.email);
+        res.redirect(`/userfrom.html?email=${user.email}`); 
+    } else { res.send("ভুল তথ্য!"); }
 });
 
 // ==========================================
-// ৪. প্রোফাইল ম্যানেজমেন্ট (সেভ ও আপডেট)
+// ৪. প্রোফাইল ম্যানেজমেন্ট (ছবিসহ সেভ ও আপডেট)
 // ==========================================
-app.post('/save-profile', async (req, res) => {
+app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
     try {
-        const { email, fullname, bio, phone, location } = req.body;
+        const { email, fullname, phone, citizenship, location, relationship, dob, bio } = req.body;
+        
+        if (!email) return res.send("এরর: ইমেইল পাওয়া যায়নি!");
+
+        let updateData = { 
+            name: fullname, phone, citizenship, location, relationship, dob, bio 
+        };
+
+        // যদি ইউজার ছবি আপলোড করে থাকে
+        if (req.file) {
+            updateData.profilePic = '/uploads/' + req.file.filename;
+        }
+
         const profile = await Profile.findOneAndUpdate(
             { email: email }, 
-            { name: fullname, bio, phone, location }, 
+            updateData, 
             { upsert: true, new: true } 
         );
-        // প্রোফাইল সেভ হলে তাকে ভিউ পেজে পাঠিয়ে দিচ্ছি
-        res.redirect(`/view-profile?email=${email}`);
-    } catch (err) { res.send("ভুল: " + err.message); }
+
+        console.log("✅ প্রোফাইল রেডি:", email);
+        res.send(`
+            <div style="text-align:center; font-family:sans-serif;">
+                <h1>সাবাস মিঠু ভাই! প্রোফাইল সেভ হয়েছে।</h1>
+                <img src="${profile.profilePic || ''}" style="width:150px; border-radius:50%; border:5px solid #6a5acd;">
+                <h2>${profile.name}</h2>
+                <p>${profile.bio}</p>
+                <a href='/userfrom.html?email=${email}'>এডিট করুন</a>
+            </div>
+        `);
+    } catch (err) { res.send("ভুল হয়েছে: " + err.message); }
 });
 
 // ==========================================
-// ৫. নতুন ফিচার যোগ করার জায়গা (এখান থেকে নিচে লিখবেন)
+// ৫. নতুন ফিচার (এখানে আপনার নতুন কোড যোগ করবেন)
 // ==========================================
 
-// উদাহরণ: প্রোফাইল দেখার পেজ
-app.get('/view-profile', async (req, res) => {
-    const profile = await Profile.findOne({ email: req.query.email });
-    if (profile) {
-        res.send(`<h1>প্রোফাইল: ${profile.name}</h1><p>বায়ো: ${profile.bio}</p><a href="/userfrom.html?email=${profile.email}">এডিট করুন</a>`);
-    } else {
-        res.send("প্রোফাইল নেই!");
-    }
-});
+// --- আপনার ভবিষ্যৎ আইডিয়া এখানে লিখুন ---
 
-// ভবিষ্যতে অন্য কিছু যোগ করতে চাইলে ঠিক এই লাইনের নিচে লিখবেন
 
 // ==========================================
-// ৬. সার্ভার স্টার্ট (এটি সবসময় সবার নিচে থাকবে)
+// ৬. সার্ভার স্টার্ট
 // ==========================================
-const PORT = 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 সার্ভার চলছে: http://localhost:${PORT}`);
+app.listen(3000, '0.0.0.0', () => {
+    console.log('🚀 BDBook রানিং ৩০০০ পোর্টে');
 });
