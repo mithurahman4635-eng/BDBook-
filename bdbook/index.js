@@ -64,6 +64,36 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
+// লগইন পোস্ট মেথড (ডাটাবেস চেক করবে)
+app.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        console.log("🔑 লগইন করার চেষ্টা করছেন:", email);
+
+        // ১. ডাটাবেসে এই ইমেইলটা আছে কি না দেখা
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            return res.send("<h1>মিঠু ভাই, এই ইমেইল তো পাওয়া যায়নি! আগে সাইন-আপ করুন।</h1>");
+        }
+
+        // ২. পাসওয়ার্ড মিলছে কি না দেখা
+        if (user.password === password) {
+            console.log("✅ লগইন সফল হয়েছে!");
+            
+            // ৩. পাসওয়ার্ড মিললে নেক্সট পেজে পাঠিয়ে দাও
+            // এখানে আপনার ড্যাশবোর্ড বা হোম পেজের নাম দিন (যেমন: dashboard.html)
+            res.redirect('/home.html'); 
+            
+        } else {
+            res.send("<h1>পাসওয়ার্ড ভুল হয়েছে! আবার চেষ্টা করুন।</h1>");
+        }
+
+    } catch (err) {
+        console.log("❌ লগইন এরর:", err.message);
+        res.status(500).send("সার্ভারে সমস্যা: " + err.message);
+    }
+});
 const PORT = 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 BDBook সার্ভার চলছে http://localhost:${PORT}`);
