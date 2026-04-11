@@ -86,6 +86,36 @@ app.get('/api/get-profile', async (req, res) => {
         res.json(profile || { message: "Not Found" });
     } catch (err) { res.status(500).send(err.message); }
 });
+// ১. গিটহাব থেকে ডাটা পাওয়ার পর ডাটাবেসে পাঠানোর ফাংশন
+async function syncWithMongoDB(items, category) {
+    const formattedItems = items.map(file => {
+        const parts = file.name.split('.')[0].split('-');
+        return {
+            itemId: file.name,
+            name: parts[0].toUpperCase(),
+            source: file.download_url,
+            price: parseInt(parts[1] || "500"),
+            type: file.name.toLowerCase().endsWith('.html') ? "code" : "media",
+            category: category
+        };
+    });
 
+    await fetch('/api/sync-github-items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: formattedItems })
+    });
+}
+
+// ২. আপনার বিদ্যমান fetchFramesFromGithub ফাংশনে এই লাইনটি যোগ করুন
+async function fetchFramesFromGithub(category) {
+    // ... আপনার আগের কোড ...
+    let files = await response.json();
+    
+    // মিঠু ভাই, এই লাইনটি যোগ করুন যাতে গিটহাব থেকে ফাইল পাওয়ার সাথে সাথেই ডাটাবেসে যায়
+    syncWithMongoDB(files, category); 
+    
+    // ... বাকি রেন্ডারিং কোড ...
+}
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 BDBook Running: ${PORT}`));
