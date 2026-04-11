@@ -73,28 +73,7 @@ app.post('/login', async (req, res) => {
     } else { res.send("ভুল ইমেইল বা পাসওয়ার্ড!"); }
 });
 
-// ৪. পোস্ট তৈরি করার API (সংশোধিত)
-app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
-    console.log("📥 নতুন পোস্টের রিকোয়েস্ট এসেছে..."); 
-    try {
-        // মিঠু ভাই, এখান থেকেই ডাটাগুলো রিসিভ হবে 👇
-        const { email, text, frameCode, type } = req.body; 
-        
-        const user = await Profile.findOne({ email: email });
-
-        const newPost = new Post({
-            userEmail: email,
-            userName: user ? user.name : "Mithu Rahman",
-            userPic: user ? user.profilePic : "/uploads/default-avatar.png",
-            postText: text,
-            postMedia: req.file ? '/uploads/' + req.file.filename : "",
-            mediaType: req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : 'text',
-            // 👇 এই ডাটাগুলো এখন ডাটাবেসে যাবে
-            frameCode: frameCode || null, 
-            type: type || 'kill' 
-        });
-
-        await newPost.save();
+      await newPost.save();
         console.log("✅ কিল মেসেজ ডাটাবেসে সেভ হয়েছে!"); 
         res.status(200).json({ status: "success", message: "Post Published!" });
     } catch (err) {
@@ -118,7 +97,35 @@ app.get('/api/newsfeed', async (req, res) => {
         res.json(posts);
     } catch (err) { res.status(500).send(err.message); }
 });
+// ৪. পোস্ট তৈরি করার API (সংশোধিত - আপনার এরর ফিক্স করা হয়েছে)
+app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
+    console.log("📥 নতুন পোস্টের রিকোয়েস্ট এসেছে..."); 
+    try {
+        const { email, text, frameCode, type } = req.body; 
+        
+        const user = await Profile.findOne({ email: email });
 
+        const newPost = new Post({
+            userEmail: email,
+            userName: user ? user.name : "Mithu Rahman",
+            userPic: user ? user.profilePic : "/uploads/default-avatar.png",
+            postText: text,
+            postMedia: req.file ? '/uploads/' + req.file.filename : "",
+            mediaType: req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : 'text',
+            frameCode: frameCode || null, 
+            type: type || 'kill' 
+        });
+
+        // এখানে await এখন কাজ করবে কারণ উপরে 'async' আছে
+        await newPost.save();
+        
+        console.log("✅ কিল মেসেজ ডাটাবেসে সেভ হয়েছে!"); 
+        res.status(200).json({ status: "success", message: "Post Published!" });
+    } catch (err) {
+        console.log("❌ এরর:", err.message);
+        res.status(500).json({ status: "error", message: err.message });
+    }
+});
 app.get('/api/user-posts', async (req, res) => {
     try {
         const posts = await Post.find({ userEmail: req.query.email }).sort({ createdAt: -1 });
