@@ -32,7 +32,15 @@ const Profile = mongoose.model('Profile', new mongoose.Schema({
     name: String, 
     profilePic: String 
 }));
-
+// মিঠু ভাই, ঠিক এখানে এই নতুন কোডটুকু পেস্ট করে দিন 👇
+const ShopItem = mongoose.model('ShopItem', new mongoose.Schema({
+    itemId: { type: String, unique: true },
+    name: String,
+    source: String,
+    price: Number,
+    type: String,
+    category: String
+}));
 // ১. পোস্ট মডেল (ফ্রেম ও টাইপসহ)
 const Post = mongoose.model('Post', new mongoose.Schema({
     userEmail: String, 
