@@ -50,9 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// --- আপনার অন্যান্য ফিচার (handleInput, applyNewStyle, openModal) সব ঠিক আছে ---
-
-// ৮. পোস্ট পাবলিশ করা (ফেসবুক লজিক - সবার পোস্ট নিউজফিডে যাবে)
+// ৮. পোস্ট পাবলিশ করা (সংশোধিত - ফ্রেম ও কিল মেসেজ লজিক সহ)
 async function publishPost() {
     const editor = document.getElementById('post-editor');
     const text = editor.innerHTML.trim(); 
@@ -60,9 +58,11 @@ async function publishPost() {
     const mediaInput = document.getElementById('media-input');
     const mediaFile = mediaInput.files ? mediaInput.files[0] : null;
     
-    // বর্তমান ইউজারের ইমেইল (URL অথবা Storage থেকে)
-    const urlParams = new URLSearchParams(window.location.search);
+    // বর্তমান ইউজারের ইমেইল
     const email = urlParams.get('email') || localStorage.getItem('userEmail'); 
+
+    // ১. মিঠু ভাই, এখান থেকেই আপনার শপ থেকে কেনা ফ্রেমের কোডটা আসবে
+    const activeFrameCode = localStorage.getItem('activeFrameSource'); 
 
     if (!email) {
         alert("কোনো আইডি লগইন করা নেই! আবার লগইন করুন।");
@@ -70,8 +70,17 @@ async function publishPost() {
     }
 
     const formData = new FormData();
-    formData.append('email', email); // সার্ভার এই ইমেইল দেখে 'Pori' কে খুঁজে নেবে
+    formData.append('email', email);
     formData.append('text', text);
+    
+    // ২. এই লাইনটি যোগ করা হলো যাতে ডাটাবেসে ফ্রেম কোড যায়
+    if (activeFrameCode) {
+        formData.append('frameCode', activeFrameCode);
+    }
+    
+    // ৩. এটা যে একটা 'kill' টাইপ পোস্ট, সেটাও সার্ভারকে বলে দিতে হবে
+    formData.append('type', 'kill');
+
     if (mediaFile) {
         formData.append('mediaFile', mediaFile);
     }
@@ -90,7 +99,6 @@ async function publishPost() {
         
         if (result.status === "success") {
             alert("✅ পোস্ট সফল হয়েছে!");
-            // নিউজফিডে যাওয়ার সময় নিজের আইডি (Email) সাথে নিয়ে যাবে
             window.location.href = `newsfeed.html?email=${email}`; 
         } else {
             alert("ভুল হয়েছে: " + result.message);
