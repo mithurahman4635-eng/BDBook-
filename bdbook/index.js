@@ -4,15 +4,20 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const app = express();
+
+// ==========================================
+// ১. সেটিংস ও মিডলওয়্যার (এখানে হাত দেওয়ার দরকার নেই)
+// ==========================================
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
-// ১. ডাটাবেস কানেকশন
 const mongoURI = "mongodb+srv://mithu:mithulamiya@cluster0.yujofyv.mongodb.net/BDBook?retryWrites=true&w=majority"; 
 mongoose.connect(mongoURI).then(() => console.log('✅ BDBook Database Connected!'));
 
-// ২. ডাটাবেস মডেল (User & Profile)
+// ==========================================
+// ২. ডাটাবেস মডেল (নতুন টেবিল লাগলে এখানে বাড়াবেন)
+// ==========================================
 const User = mongoose.model('User', new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true }
@@ -26,48 +31,64 @@ const Profile = mongoose.model('Profile', new mongoose.Schema({
     location: String
 }));
 
-// ৩. সাইন-আপ (নতুন অ্যাকাউন্ট)
+// ==========================================
+// ৩. মেইন রাউটস (সাইন-আপ ও লগইন)
+// ==========================================
 app.post('/signup', async (req, res) => {
     try {
         const { email, password } = req.body;
         const newUser = new User({ email, password });
         await newUser.save();
-        console.log("🎉 সাইন-আপ সফল:", email);
         res.redirect('/login.html');
-    } catch (err) {
-        res.send("এই ইমেইল দিয়ে আগে অ্যাকাউন্ট খোলা হয়েছে!");
-    }
+    } catch (err) { res.send("ইমেইলটি আগে ব্যবহার করা হয়েছে!"); }
 });
 
-// ৪. লগইন (সফল হলে সরাসরি প্রোফাইল ফর্ম-এ নিয়ে যাবে)
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email, password });
     if (user) {
-        console.log("✅ লগইন সফল:", email);
-        res.redirect(`/userform.html?email=${email}`);
+        res.redirect(`/userfrom.html?email=${email}`); // আপনার ফাইলের বানান অনুযায়ী
     } else {
-        res.send("ইমেইল বা পাসওয়ার্ড ভুল!");
+        res.send("ভুল তথ্য!");
     }
 });
 
-// ৫. প্রোফাইল সেভ এবং এডিট (একই রাউটে দুই কাজ)
+// ==========================================
+// ৪. প্রোফাইল ম্যানেজমেন্ট (সেভ ও আপডেট)
+// ==========================================
 app.post('/save-profile', async (req, res) => {
     try {
-        const { email, name, bio, phone, location } = req.body;
-        
-        // এখানে ম্যাজিক: ইমেইল দিয়ে খুঁজবে, না থাকলে নতুন বানাবে, থাকলে আপডেট করবে
+        const { email, fullname, bio, phone, location } = req.body;
         const profile = await Profile.findOneAndUpdate(
             { email: email }, 
-            { name, bio, phone, location }, 
-            { upsert: true, new: true } // upsert মানে হলো না থাকলে নতুন তৈরি করো
+            { name: fullname, bio, phone, location }, 
+            { upsert: true, new: true } 
         );
+        // প্রোফাইল সেভ হলে তাকে ভিউ পেজে পাঠিয়ে দিচ্ছি
+        res.redirect(`/view-profile?email=${email}`);
+    } catch (err) { res.send("ভুল: " + err.message); }
+});
 
-        console.log("✅ প্রোফাইল আপডেট/সেভ হয়েছে:", email);
-        res.send(`<h1>সাবাস মিঠু ভাই! ডাটা সেভ হয়েছে।</h1><p>নাম: ${profile.name}</p><a href='/userform.html?email=${email}'>আবার এডিট করুন</a>`);
-    } catch (err) {
-        res.send("ভুল হয়েছে: " + err.message);
+// ==========================================
+// ৫. নতুন ফিচার যোগ করার জায়গা (এখান থেকে নিচে লিখবেন)
+// ==========================================
+
+// উদাহরণ: প্রোফাইল দেখার পেজ
+app.get('/view-profile', async (req, res) => {
+    const profile = await Profile.findOne({ email: req.query.email });
+    if (profile) {
+        res.send(`<h1>প্রোফাইল: ${profile.name}</h1><p>বায়ো: ${profile.bio}</p><a href="/userfrom.html?email=${profile.email}">এডিট করুন</a>`);
+    } else {
+        res.send("প্রোফাইল নেই!");
     }
 });
 
-app.listen(3000, () => console.log('🚀 BDBook রানিং ৩০০০ পোর্টে'));
+// ভবিষ্যতে অন্য কিছু যোগ করতে চাইলে ঠিক এই লাইনের নিচে লিখবেন
+
+// ==========================================
+// ৬. সার্ভার স্টার্ট (এটি সবসময় সবার নিচে থাকবে)
+// ==========================================
+const PORT = 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 সার্ভার চলছে: http://localhost:${PORT}`);
+});
