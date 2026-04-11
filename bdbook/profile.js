@@ -1,4 +1,36 @@
-// ১. ফলো বাটন লজিক (ক্লিক করলে কাজ করবে)
+// ১. ইউজার ডাটা লোড করার লজিক (MongoDB থেকে)
+const urlParams = new URLSearchParams(window.location.search);
+const userEmail = urlParams.get('email');
+
+async function loadProfileData() {
+    if (!userEmail) {
+        console.log("ইমেইল পাওয়া যায়নি, তাই ডাটা লোড করা যাচ্ছে না।");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/get-profile?email=${userEmail}`);
+        if (response.ok) {
+            const data = await response.json();
+
+            // HTML-এ ডাটা সেট করা
+            if(data.name) document.getElementById('name-display').innerText = data.name;
+            if(data.bio) document.getElementById('bio-display').innerText = data.bio;
+            if(data.location) document.getElementById('loc-display').innerText = data.location;
+            if(data.relationship) document.getElementById('rel-display').innerText = data.relationship;
+            if(data.dob) document.getElementById('dob-display').innerText = data.dob;
+            
+            // ডাটাবেসে ছবি থাকলে সেটি দেখানো
+            if(data.profilePic) {
+                document.getElementById('display-pic').src = data.profilePic;
+            }
+        }
+    } catch (err) {
+        console.error("ডাটা লোড করতে সমস্যা হয়েছে:", err);
+    }
+}
+
+// ২. ফলো বাটন লজিক
 let isFollowed = false;
 function handleFollow() {
     const btn = document.getElementById('main-follow-btn');
@@ -19,7 +51,7 @@ function handleFollow() {
     count.innerText = current;
 }
 
-// ২. See More তথ্য দেখানো
+// ৩. See More তথ্য দেখানো
 function toggleExtraInfo() {
     const box = document.getElementById('extra-data-box');
     box.classList.toggle('active');
@@ -27,17 +59,25 @@ function toggleExtraInfo() {
     btn.innerText = box.classList.contains('active') ? "See Less" : "See More About";
 }
 
-// ৩. ফলোয়ার লিস্ট মোডাল
+// ৪. মোডাল কন্ট্রোল (ফলোয়ার লিস্ট)
 function openFollowList(type) {
-    document.getElementById('modal-title').innerText = type.toUpperCase();
-    document.getElementById('follow-modal-overlay').classList.add('open');
+    const modal = document.getElementById('follow-modal-overlay');
+    if(modal) {
+        document.getElementById('modal-title').innerText = type.toUpperCase();
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden'; 
+    }
 }
 
 function closeFollowList() {
-    document.getElementById('follow-modal-overlay').classList.remove('open');
+    const modal = document.getElementById('follow-modal-overlay');
+    if(modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = 'auto'; 
+    }
 }
 
-// ৪. নামের প্রথম শব্দ দিয়ে সার্চ
+// ৫. সার্চ লজিক
 function filterUsers() {
     const term = document.getElementById('user-search').value.toLowerCase();
     const items = document.querySelectorAll('.list-user-row');
@@ -46,18 +86,16 @@ function filterUsers() {
         item.style.display = name.startsWith(term) ? 'flex' : 'none';
     });
 }
-// --- ফটো আপলোড এবং স্ক্রল সমস্যার সমাধান ---
 
+// ৬. ফটো আপলোড (এটি ক্লায়েন্ট সাইড প্রিভিউয়ের জন্য)
 function uploadPhoto(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            // ১. প্রোফাইল ফটো পরিবর্তন করা
             const profilePic = document.getElementById('display-pic');
             if(profilePic) {
                 profilePic.src = e.target.result;
-                // ২. ছবিটা সেভ করে রাখা যাতে রিফ্রেশ করলে না যায়
                 localStorage.setItem('userProfilePic', e.target.result);
                 alert("প্রোফাইল ফটো আপডেট হয়েছে!");
             }
@@ -66,33 +104,21 @@ function uploadPhoto(event) {
     }
 }
 
-// পেজ লোড হলে সেভ করা ছবি ফিরিয়ে আনা
+// পেজ লোড হলে সব ডাটা এবং সেটিংস রান করা
 window.addEventListener('DOMContentLoaded', () => {
+    // ডাটাবেস থেকে তথ্য আনা
+    loadProfileData();
+
+    // আগের সেভ করা ছবি থাকলে দেখানো (অপশনাল)
     const savedPic = localStorage.getItem('userProfilePic');
     if (savedPic && document.getElementById('display-pic')) {
-        document.getElementById('display-pic').src = savedPic;
+        // যদি ডাটাবেসের ছবি লোড না হয় তবে লোকালটা দেখাবে
+        if(!document.getElementById('display-pic').getAttribute('src')) {
+            document.getElementById('display-pic').src = savedPic;
+        }
     }
     
-    // স্ক্রল ফিক্স: নিশ্চিত করা যে বডি স্ক্রল করা যাচ্ছে
+    // স্ক্রল ফিক্স
     document.body.style.overflowY = "auto";
     document.documentElement.style.overflowY = "auto";
 });
-
-// মোডাল ক্লোজ করার সময় স্ক্রল সচল রাখা
-function closeFollowList() {
-    const modal = document.getElementById('follow-modal-overlay');
-    if(modal) {
-        modal.classList.remove('open');
-        document.body.style.overflow = 'auto'; // স্ক্রল আবার চালু
-    }
-}
-
-// মোডাল ওপেন করার সময় মেইন পেজ লক করা (প্রফেশনাল লুকের জন্য)
-function openFollowList(type) {
-    const modal = document.getElementById('follow-modal-overlay');
-    if(modal) {
-        document.getElementById('modal-title').innerText = type.toUpperCase();
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden'; // বক্স খুললে নিচের পেজ সরবে না
-    }
-}
