@@ -104,9 +104,17 @@ function updateEventNotification(count) {
     }
 }
 
-function goToProfile() { window.location.href = "profile.html"; }
-function goToCreatePost() { window.location.href = "post.html"; }
-function openShop() { window.location.href = "shop.html"; }
+function goToProfile() {
+    // লোকাল স্টোরেজ থেকে ইমেইল নিয়ে লিংকের সাথে জুড়ে দেওয়া
+    const email = localStorage.getItem('userEmail');
+    window.location.href = `profile.html?email=${email}`;
+}
+
+function goToCreatePost() {
+    // পোস্ট পেজে যাওয়ার সময়ও ইমেইল সাথে রাখা জরুরি
+    const email = localStorage.getItem('userEmail');
+    window.location.href = `post.html?email=${email}`;
+}
 
 // ৬. পেজ লোড এক্সিকিউশন
 window.onload = function() {
