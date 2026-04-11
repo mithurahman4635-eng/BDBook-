@@ -1,7 +1,15 @@
 document.addEventListener("DOMContentLoaded", async () => {
     // ১. ইউআরএল থেকে ইমেইল খুঁজবে, না পেলে লোকাল স্টোরেজ থেকে নেবে
     const urlParams = new URLSearchParams(window.location.search);
-    const userEmail = urlParams.get('email') || localStorage.getItem('userEmail');
+    let userEmail = urlParams.get('email');
+
+    // যদি URL এ ইমেইল না থাকে, তবে লোকাল স্টোরেজ থেকে চেক করবে
+    if (!userEmail) {
+        userEmail = localStorage.getItem('userEmail');
+    } else {
+        // যদি URL এ পায়, তবে সেটা স্টোরেজে সেভ করে রাখবে যাতে হারিয়ে না যায়
+        localStorage.setItem('userEmail', userEmail);
+    }
     
     if (userEmail) {
         try {
@@ -9,11 +17,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             const data = await response.json();
             
             if (data && data.name) {
-                // প্রোফাইল ছবি সেট করা
-                if (data.profilePic) {
-                    document.getElementById('profile-img').src = data.profilePic;
+                // প্রোফাইল ছবি সেট করা (আপনার Pori আইডির ছবি আসবে)
+                const profileImg = document.getElementById('profile-img');
+                if (profileImg && data.profilePic) {
+                    profileImg.src = data.profilePic;
                 }
-                // প্রোফাইল নাম সেট করা (যাতে 'Pori' বা সঠিক নাম দেখায়)
+                
+                // প্রোফাইল নাম সেট করা (Mithu Rahman এর জায়গায় Pori আসবে)
                 const nameHeader = document.querySelector('.user-meta h4');
                 if (nameHeader) {
                     nameHeader.innerHTML = `${data.name} <span id="dynamic-tags" class="tags-inline"></span>`;
@@ -25,29 +35,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// --- আপনার ইনপুট, স্টাইল এবং মডাল ফিচারগুলো এখানে থাকবে (পরিবর্তন করার প্রয়োজন নেই) ---
-// (আপনার দেওয়া handleInput, applyNewStyle, openModal ফাংশনগুলো আগের মতোই কাজ করবে)
+// --- আপনার অন্যান্য ফিচার (handleInput, applyNewStyle, openModal) সব ঠিক আছে ---
 
-// ৮. পোস্ট পাবলিশ করা (সংশোধিত ও ফিক্সড)
+// ৮. পোস্ট পাবলিশ করা (ফেসবুক লজিক - সবার পোস্ট নিউজফিডে যাবে)
 async function publishPost() {
     const editor = document.getElementById('post-editor');
-    // মিঠু ভাই, স্টাইলসহ টেক্সট ডাটাবেসে পাঠাতে innerHTML ব্যবহার করুন
     const text = editor.innerHTML.trim(); 
     
     const mediaInput = document.getElementById('media-input');
     const mediaFile = mediaInput.files ? mediaInput.files[0] : null;
     
-    // বর্তমান ইউজারের ইমেইল নিশ্চিত করা
+    // বর্তমান ইউজারের ইমেইল (URL অথবা Storage থেকে)
     const urlParams = new URLSearchParams(window.location.search);
     const email = urlParams.get('email') || localStorage.getItem('userEmail'); 
 
     if (!email) {
-        alert("ইউজার ইমেইল পাওয়া যায়নি! দয়া করে লগইন করে আবার আসুন।");
+        alert("কোনো আইডি লগইন করা নেই! আবার লগইন করুন।");
         return;
     }
 
     const formData = new FormData();
-    formData.append('email', email); // এই ইমেইলটি সার্ভারকে বলবে পোস্টটি কার
+    formData.append('email', email); // সার্ভার এই ইমেইল দেখে 'Pori' কে খুঁজে নেবে
     formData.append('text', text);
     if (mediaFile) {
         formData.append('mediaFile', mediaFile);
@@ -66,8 +74,8 @@ async function publishPost() {
         const result = await response.json();
         
         if (result.status === "success") {
-            alert("✅ পোস্ট সফল হয়েছে, মিঠু ভাই!");
-            // নিউজফিডে যাওয়ার সময় ইমেইলটি সাথে রাখুন যাতে প্রোফাইল ঠিক থাকে
+            alert("✅ পোস্ট সফল হয়েছে!");
+            // নিউজফিডে যাওয়ার সময় নিজের আইডি (Email) সাথে নিয়ে যাবে
             window.location.href = `newsfeed.html?email=${email}`; 
         } else {
             alert("ভুল হয়েছে: " + result.message);
