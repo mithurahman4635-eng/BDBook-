@@ -31,13 +31,23 @@ const User = mongoose.model('User', new mongoose.Schema({
 
 const Profile = mongoose.model('Profile', new mongoose.Schema({
     email: { type: String, required: true, unique: true },
-    name: String, phone: String, citizenship: String, location: String,
-    relationship: String, dob: String, bio: String, profilePic: String 
+    name: String, 
+    phone: String, 
+    citizenship: String, 
+    location: String,
+    relationship: String, 
+    dob: String, 
+    bio: String, 
+    profilePic: String 
 }));
 
 const Post = mongoose.model('Post', new mongoose.Schema({
-    userEmail: String, userName: String, userPic: String,        
-    postText: String, postMedia: String, mediaType: String,      
+    userEmail: String, 
+    userName: String, 
+    userPic: String,        
+    postText: String, 
+    postMedia: String, 
+    mediaType: String,      
     activeFrame: String, 
     likes: { type: Array, default: [] }, 
     createdAt: { type: Date, default: Date.now }
@@ -61,18 +71,19 @@ app.post('/login', async (req, res) => {
     } else { res.send("ভুল ইমেইল বা পাসওয়ার্ড!"); }
 });
 
+// ৪. পোস্ট তৈরি করার API (সংশোধিত অংশ)
 app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
+    console.log("📥 নতুন পোস্টের রিকোয়েস্ট এসেছে..."); 
     try {
         const { email, text, activeFrame } = req.body;
         
-        // ১. ডাটাবেস থেকে ওই ইমেইলের প্রোফাইল খুঁজে বের করা
+        // লগইন করা ইউজারের প্রোফাইল খুঁজে বের করা (Pori আইডি ঠিক করার জন্য)
         const user = await Profile.findOne({ email: email });
 
         const newPost = new Post({
             userEmail: email,
-            // ২. যদি প্রোফাইল থাকে তবে প্রোফাইলের নাম হবে, নাহলে Mithu Rahman
             userName: user ? user.name : "Mithu Rahman",
-            userPic: user ? user.profilePic : "default-avatar.png",
+            userPic: user ? user.profilePic : "/uploads/default-avatar.png",
             postText: text,
             postMedia: req.file ? '/uploads/' + req.file.filename : "",
             mediaType: req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : 'text',
@@ -80,24 +91,15 @@ app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
         });
 
         await newPost.save();
+        console.log("✅ পোস্ট ডাটাবেসে সেভ হয়েছে!"); 
         res.status(200).json({ status: "success", message: "Post Published!" });
     } catch (err) {
+        console.log("❌ এরর:", err.message);
         res.status(500).json({ status: "error", message: err.message });
     }
 });
 
-        await newPost.save();
-        console.log("✅ পোস্ট ডাটাবেসে সেভ হয়েছে: ", text.substring(0, 20) + "..."); 
-        
-        // ফ্রন্টএন্ডকে কনফার্মেশন পাঠানো
-        res.status(200).json({ status: "success", message: "Post Published!" });
-    } catch (err) { 
-        console.log("❌ পোস্ট সেভ করতে ভুল হয়েছে:", err.message);
-        res.status(500).json({ status: "error", message: err.message }); 
-    }
-});
-
-// নিউজফিড (সব পোস্ট)
+// ৫. নিউজফিড ও প্রোফাইল API
 app.get('/api/newsfeed', async (req, res) => {
     try {
         const posts = await Post.find().sort({ createdAt: -1 }); 
@@ -105,7 +107,6 @@ app.get('/api/newsfeed', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-// ইউজারের প্রোফাইল পোস্ট
 app.get('/api/user-posts', async (req, res) => {
     try {
         const posts = await Post.find({ userEmail: req.query.email }).sort({ createdAt: -1 });
@@ -113,7 +114,6 @@ app.get('/api/user-posts', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-// প্রোফাইল ডাটা পাওয়া
 app.get('/api/get-profile', async (req, res) => {
     try {
         const profile = await Profile.findOne({ email: req.query.email });
@@ -121,7 +121,6 @@ app.get('/api/get-profile', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-// প্রোফাইল সেভ করা
 app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
     try {
         const { email, fullname, phone, citizenship, location, relationship, dob, bio } = req.body;
@@ -132,7 +131,7 @@ app.post('/save-profile', upload.single('profilePic'), async (req, res) => {
     } catch (err) { res.send("ভুল হয়েছে: " + err.message); }
 });
 
-// ৫. পেজ নেভিগেশন
+// ৬. পেজ নেভিগেশন
 app.get('/post', (req, res) => res.sendFile(path.join(__dirname, 'post.html')));
 app.get('/newsfeed', (req, res) => res.sendFile(path.join(__dirname, 'newsfeed.html')));
 app.get('/profile', (req, res) => res.sendFile(path.join(__dirname, 'profile.html')));
