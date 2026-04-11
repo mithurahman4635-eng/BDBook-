@@ -225,4 +225,47 @@ function resetAll() {
     closeModal();
 }
 
-function publishPost() { alert("Post Successful, মিঠু ভাই!"); window.location.href = "newsfeed.html"; }
+// ৮. পোস্ট পাবলিশ করা (সার্ভারে পাঠানো)
+async function publishPost() {
+    const editor = document.getElementById('post-editor');
+    const text = editor.innerText.trim(); // এডিটর থেকে টেক্সট নেওয়া
+    const mediaInput = document.getElementById('media-input');
+    const mediaFile = mediaInput.files[0];
+    
+    // লোকাল স্টোরেজ থেকে ইউজারের ইমেইল নেওয়া (লগইনের সময় যেটা সেভ করেছিলেন)
+    const email = localStorage.getItem('userEmail') || "mithu@example.com"; 
+
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('text', text);
+    if (mediaFile) {
+        formData.append('mediaFile', mediaFile);
+    }
+
+    // বাটন লোডিং দেখানো
+    const btn = document.getElementById('post-btn');
+    btn.innerText = "Posting...";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/api/create-post', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === "success") {
+            alert("✅ পোস্ট সফল হয়েছে, মিঠু ভাই!");
+            window.location.href = "newsfeed.html"; // সাকসেস হলে নিউজফিডে যাবে
+        } else {
+            alert("ভুল হয়েছে: " + result.message);
+        }
+    } catch (err) {
+        console.error("Error:", err);
+        alert("সার্ভারের সাথে কানেক্ট করা যাচ্ছে না!");
+    } finally {
+        btn.innerText = "Post";
+        btn.disabled = false;
+    }
+}
