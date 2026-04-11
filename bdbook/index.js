@@ -216,6 +216,33 @@ app.get('/post', (req, res) => {
 app.get('/newsfeed', (req, res) => {
     res.sendFile(path.join(__dirname, 'newsfeed.html'));
 });
+// ২. ডাটাবেসে পোস্ট সেভ করার রাউট (এটি আপনার কোডে নেই - এটি যোগ করুন) 
+app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
+    try {
+        const { email, text } = req.body;
+        
+        // ইউজারের নাম ও ছবি ডাটাবেস থেকে খুঁজে বের করা
+        const user = await Profile.findOne({ email: email });
+
+        const newPost = new Post({
+            userEmail: email,
+            userName: user ? user.name : "Mithu Rahman", // ইউজার না পেলে আপনার নাম ডিফল্ট থাকবে
+            userPic: user ? user.profilePic : "default-avatar.png",
+            postText: text,
+            postMedia: req.file ? '/uploads/' + req.file.filename : "",
+            mediaType: req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : 'text',
+            createdAt: new Date()
+        });
+
+        await newPost.save();
+        console.log("✅ নতুন পোস্ট ডাটাবেসে সেভ হয়েছে!");
+        res.json({ status: "success" });
+
+    } catch (err) {
+        console.error("❌ পোস্ট সেভ করতে ভুল হয়েছে:", err);
+        res.status(500).json({ status: "error", message: err.message });
+    }
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 BDBook রানিং পোর্টে: ${PORT}`);
