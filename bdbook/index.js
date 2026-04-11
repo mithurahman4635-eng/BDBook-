@@ -38,6 +38,7 @@ const Profile = mongoose.model('Profile', new mongoose.Schema({
 const Post = mongoose.model('Post', new mongoose.Schema({
     userEmail: String, userName: String, userPic: String,        
     postText: String, postMedia: String, mediaType: String,      
+    activeFrame: String, // ⚠️ মিঠু ভাই, এই লাইনটি ফ্রেম সেভ করার জন্য যোগ করা হয়েছে
     likes: { type: Array, default: [] }, 
     createdAt: { type: Date, default: Date.now }
 }));
@@ -60,12 +61,12 @@ app.post('/login', async (req, res) => {
     } else { res.send("ভুল ইমেইল বা পাসওয়ার্ড!"); }
 });
 
-// ৪. পোস্ট ও প্রোফাইল API (সবচেয়ে গুরুত্বপূর্ণ)
+// ৪. পোস্ট ও প্রোফাইল API
 
-// নতুন পোস্ট তৈরি
+// নতুন পোস্ট তৈরি (এখানে activeFrame যোগ করা হয়েছে)
 app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
     try {
-        const { email, text } = req.body;
+        const { email, text, activeFrame } = req.body; // ফ্রন্টএন্ড থেকে ফ্রেম ডাটা আসবে
         const user = await Profile.findOne({ email: email });
         const newPost = new Post({
             userEmail: email,
@@ -73,7 +74,8 @@ app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
             userPic: user ? user.profilePic : "default-avatar.png",
             postText: text,
             postMedia: req.file ? '/uploads/' + req.file.filename : "",
-            mediaType: req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : 'text'
+            mediaType: req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : 'text',
+            activeFrame: activeFrame || "default" // ⚠️ এখানে ফ্রেম সেভ হবে
         });
         await newPost.save();
         res.json({ status: "success" });
@@ -88,7 +90,7 @@ app.get('/api/newsfeed', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-// ইউজারের প্রোফাইল পোস্ট (শুধুমাত্র নিজের পোস্ট)
+// ইউজারের প্রোফাইল পোস্ট
 app.get('/api/user-posts', async (req, res) => {
     try {
         const posts = await Post.find({ userEmail: req.query.email }).sort({ createdAt: -1 });
