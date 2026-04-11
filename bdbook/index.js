@@ -61,24 +61,30 @@ app.post('/login', async (req, res) => {
     } else { res.send("ভুল ইমেইল বা পাসওয়ার্ড!"); }
 });
 
-// ৪. পোস্ট ও প্রোফাইল API
-
-// মিঠু ভাই, এখানে কনসোল লগ যোগ করা হয়েছে যাতে টার্মিনালে নড়াচড়া দেখা যায়
 app.post('/api/create-post', upload.single('mediaFile'), async (req, res) => {
-    console.log("📥 নতুন পোস্টের রিকোয়েস্ট এসেছে..."); 
     try {
-        const { email, text, activeFrame } = req.body; 
-        const user = await Profile.findOne({ email: email });
+        const { email, text, activeFrame } = req.body;
         
+        // ১. ডাটাবেস থেকে ওই ইমেইলের প্রোফাইল খুঁজে বের করা
+        const user = await Profile.findOne({ email: email });
+
         const newPost = new Post({
             userEmail: email,
+            // ২. যদি প্রোফাইল থাকে তবে প্রোফাইলের নাম হবে, নাহলে Mithu Rahman
             userName: user ? user.name : "Mithu Rahman",
             userPic: user ? user.profilePic : "default-avatar.png",
             postText: text,
             postMedia: req.file ? '/uploads/' + req.file.filename : "",
             mediaType: req.file ? (req.file.mimetype.startsWith('video') ? 'video' : 'image') : 'text',
-            activeFrame: activeFrame || "default" 
+            activeFrame: activeFrame || "default"
         });
+
+        await newPost.save();
+        res.status(200).json({ status: "success", message: "Post Published!" });
+    } catch (err) {
+        res.status(500).json({ status: "error", message: err.message });
+    }
+});
 
         await newPost.save();
         console.log("✅ পোস্ট ডাটাবেসে সেভ হয়েছে: ", text.substring(0, 20) + "..."); 
