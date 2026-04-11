@@ -20,40 +20,43 @@ async function loadProfileData() {
     } catch (err) { console.error("প্রোফাইল ডাটা এরর:", err); }
 }
 
-// ২. মিঠু ভাই, এই অংশটি আমি নতুন যোগ করলাম আপনার পোস্টগুলো দেখানোর জন্য
 async function loadUserPosts() {
     if (!userEmail) return;
 
     try {
         const response = await fetch(`/api/user-posts?email=${userEmail}`);
         const posts = await response.json();
-        const postContainer = document.getElementById('user-post-container'); // আপনার HTML এ এই ID থাকতে হবে
+        
+        // মিঠু ভাই, আপনার HTML অনুযায়ী এখানে আইডি হবে 'user-posts'
+        const postContainer = document.getElementById('user-posts'); 
 
         if (!postContainer) return;
 
-        postContainer.innerHTML = ""; // আগের ডাটা পরিষ্কার
+        postContainer.innerHTML = ""; 
 
         if (posts.length === 0) {
-            postContainer.innerHTML = "<p style='text-align:center; color:gray; padding:20px;'>আপনি এখনো কোনো পোস্ট করেননি!</p>";
+            postContainer.innerHTML = "<p style='text-align:center; color:gray; padding:20px;'>এখনো কোনো পোস্ট করা হয়নি!</p>";
             return;
         }
 
         posts.forEach(post => {
             postContainer.innerHTML += `
-                <div class="profile-post-card" style="background:#fff; margin-bottom:15px; border-radius:10px; overflow:hidden; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-                    <div style="padding:10px; display:flex; align-items:center; gap:10px;">
-                        <img src="${post.userPic || 'default-avatar.png'}" style="width:35px; height:35px; border-radius:50%;">
-                        <b style="font-size:14px;">${post.userName}</b>
+                <div class="post-card" style="background:#fff; margin-top:10px; padding:15px; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.2);">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <img src="${post.userPic || 'placeholder.jpg'}" style="width:40px; height:40px; border-radius:50%;">
+                        <div>
+                            <h4 style="margin:0; font-size:14px;">${post.userName}</h4>
+                            <small style="color:gray;">${new Date(post.createdAt).toLocaleString()}</small>
+                        </div>
                     </div>
-                    <div style="padding:0 10px 10px 10px; font-size:14px;">${post.postText}</div>
+                    <div style="font-size:15px; margin-bottom:10px;">${post.postText}</div>
                     ${post.postMedia ? (post.mediaType === 'video' ? 
-                        `<video src="${post.postMedia}" controls style="width:100%;"></video>` : 
-                        `<img src="${post.postMedia}" style="width:100%;">`) : ''}
+                        `<video src="${post.postMedia}" controls style="width:100%; border-radius:5px;"></video>` : 
+                        `<img src="${post.postMedia}" style="width:100%; border-radius:5px;">`) : ''}
                 </div>`;
         });
-    } catch (err) { console.error("পোস্ট লোড এরর:", err); }
+    } catch (err) { console.error("প্রোফাইল পোস্ট লোড এরর:", err); }
 }
-
 // ৩. ফলো বাটন লজিক (অপরিবর্তিত)
 let isFollowed = false;
 function handleFollow() {
